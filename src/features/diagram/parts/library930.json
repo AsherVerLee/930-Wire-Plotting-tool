@@ -1,0 +1,114 @@
+[
+  {
+    "key": "kraken-x60",
+    "name": "Kraken X60",
+    "width": 140,
+    "height": 72,
+    "terminals": [
+      { "id": "p+", "label": "+", "type": "power+", "x": 10, "y": 60 },
+      { "id": "p-", "label": "-", "type": "power-", "x": 30, "y": 60 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 100, "y": 60 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 120, "y": 60 }
+    ]
+  },
+  {
+    "key": "kraken-x44",
+    "name": "Kraken X44",
+    "width": 140,
+    "height": 72,
+    "terminals": [
+      { "id": "p+", "label": "+", "type": "power+", "x": 10, "y": 60 },
+      { "id": "p-", "label": "-", "type": "power-", "x": 30, "y": 60 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 100, "y": 60 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 120, "y": 60 }
+    ]
+  },
+  {
+    "key": "roborio",
+    "name": "RoboRIO",
+    "width": 180,
+    "height": 110,
+    "terminals": [
+      { "id": "ethernet", "label": "ETH", "type": "ethernet", "x": 20, "y": 20 },
+      { "id": "usb", "label": "USB", "type": "usb", "x": 50, "y": 20 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 120, "y": 90 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 150, "y": 90 }
+    ]
+  },
+  {
+    "key": "pdh",
+    "name": "REV PDH",
+    "width": 200,
+    "height": 100,
+    "terminals": [
+      { "id": "batt+", "label": "+", "type": "power+", "x": 20, "y": 80 },
+      { "id": "batt-", "label": "-", "type": "power-", "x": 40, "y": 80 }
+    ]
+  },
+  {
+    "key": "cancoder",
+    "name": "CTRE CANcoder",
+    "width": 120,
+    "height": 64,
+    "terminals": [
+      { "id": "p+", "label": "+", "type": "power+", "x": 10, "y": 48 },
+      { "id": "p-", "label": "-", "type": "power-", "x": 28, "y": 48 },
+      { "id": "canH", "label": "H", "type": "canH", "x": 80, "y": 48 },
+      { "id": "canL", "label": "L", "type": "canL", "x": 98, "y": 48 }
+    ]
+  },
+  {
+    "key": "canivore",
+    "name": "CTRE CANivore",
+    "width": 150,
+    "height": 70,
+    "terminals": [
+      { "id": "eth", "label": "ETH", "type": "ethernet", "x": 20, "y": 20 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 100, "y": 50 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 120, "y": 50 }
+    ]
+  },
+  {
+    "key": "mitocandria",
+    "name": "mitoCANdria",
+    "width": 150,
+    "height": 70,
+    "terminals": [
+      { "id": "canH", "label": "H", "type": "canH", "x": 30, "y": 50 },
+      { "id": "canL", "label": "L", "type": "canL", "x": 50, "y": 50 }
+    ]
+  },
+  {
+    "key": "switch",
+    "name": "Ethernet Switch (5-port)",
+    "width": 180,
+    "height": 60,
+    "terminals": [
+      { "id": "p1", "label": "1", "type": "ethernet", "x": 20, "y": 40 },
+      { "id": "p2", "label": "2", "type": "ethernet", "x": 50, "y": 40 },
+      { "id": "p3", "label": "3", "type": "ethernet", "x": 80, "y": 40 },
+      { "id": "p4", "label": "4", "type": "ethernet", "x": 110, "y": 40 },
+      { "id": "p5", "label": "5", "type": "ethernet", "x": 140, "y": 40 }
+    ]
+  },
+  {
+    "key": "radio",
+    "name": "Radio",
+    "width": 160,
+    "height": 70,
+    "terminals": [
+      { "id": "eth1", "label": "ETH1", "type": "ethernet", "x": 30, "y": 50 },
+      { "id": "eth2", "label": "ETH2", "type": "ethernet", "x": 60, "y": 50 }
+    ]
+  },
+  {
+    "key": "pigeon",
+    "name": "Pigeon Gyro",
+    "width": 130,
+    "height": 60,
+    "terminals": [
+      { "id": "canH", "label": "H", "type": "canH", "x": 20, "y": 40 },
+      { "id": "canL", "label": "L", "type": "canL", "x": 38, "y": 40 }
+    ]
+  }
+]
