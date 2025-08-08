@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const PropertiesPanel = () => {
-  const { selected, components, rotateComponent } = useDiagramStore();
+  const { selected, components, rotateComponent, wires, setWireGauge } = useDiagramStore();
   const comp = selected?.type === "component" ? components.find(c => c.id === selected.id) : null;
+  const wire = selected?.type === "wire" ? wires.find(w => w.id === selected.id) : null;
 
   if (!selected) {
     return (
@@ -31,6 +32,23 @@ export const PropertiesPanel = () => {
             <option value={90}>90°</option>
             <option value={180}>180°</option>
             <option value={270}>270°</option>
+          </select>
+        </div>
+      </aside>
+    );
+  }
+
+  if (wire) {
+    return (
+      <aside className="w-72 shrink-0 h-[calc(100vh-64px)] border-l border-border bg-card/50 p-4 space-y-4">
+        <div className="text-sm font-semibold">Wire</div>
+        <Separator />
+        <div className="space-y-2">
+          <Label>Gauge (AWG)</Label>
+          <select value={wire.gauge} onChange={(e) => setWireGauge(wire.id, parseInt(e.target.value) as any)} className="bg-background border border-border rounded px-2 py-1 text-sm w-full">
+            {[10,12,14,16,18,20,22].map((g) => (
+              <option key={g} value={g}>{g}</option>
+            ))}
           </select>
         </div>
       </aside>

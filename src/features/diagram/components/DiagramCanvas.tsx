@@ -2,7 +2,9 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import { useDrop } from "react-dnd";
 import { useDiagramStore } from "@/state/diagramStore";
 import partsJson from "../parts/library930.json";
+import { loadCustomParts } from "../parts/customParts";
 import type { PartDefinition, Terminal } from "@/types/diagram";
+import { terminalColors } from "@/types/diagram";
 import { manhattanPath, strokeWidthForGauge, offsetForPair } from "@/utils/routing";
 import { canConnect } from "@/utils/validation";
 import { toast } from "sonner";
@@ -21,7 +23,8 @@ export const DiagramCanvas = () => {
 
   // Initialize library in store once
   useEffect(() => {
-    setPartsLibrary(partsJson as PartDefinition[]);
+    const custom = loadCustomParts();
+    setPartsLibrary([...(partsJson as PartDefinition[]), ...custom]);
   }, [setPartsLibrary]);
 
   const [, drop] = useDrop(
@@ -153,13 +156,13 @@ export const DiagramCanvas = () => {
             const b = getTerminalAbs(bComp.id, bTerm);
             const base = manhattanPath(a, b, 0);
             const width = strokeWidthForGauge(w.gauge);
-            const color = getComputedStyle(document.documentElement).getPropertyValue("--ring");
             const pairOffset = offsetForPair(w.type);
+            const { baseColor, offsetColor } = wirePairColors(w.type);
             return (
-              <g key={w.id}>
-                <path d={base} fill="none" stroke={pairOffset ? "hsl(var(--foreground))" : "hsl(var(--primary))"} strokeWidth={width} strokeLinecap="round" />
+              <g key={w.id} onClick={() => select({ type: "wire", id: w.id })}>
+                <path d={base} fill="none" stroke={baseColor} strokeWidth={width} strokeLinecap="round" />
                 {pairOffset > 0 && (
-                  <path d={manhattanPath(a, b, pairOffset)} fill="none" stroke="hsl(var(--accent-foreground))" strokeWidth={Math.max(1.5, width - 0.6)} strokeLinecap="round" />
+                  <path d={manhattanPath(a, b, pairOffset)} fill="none" stroke={offsetColor} strokeWidth={Math.max(1.5, width - 0.6)} strokeLinecap="round" />
                 )}
               </g>
             );
@@ -204,14 +207,18 @@ export const DiagramCanvas = () => {
 };
 
 function terminalColor(type: Terminal["type"]) {
-  switch (type) {
-    case "power+": return "#ef4444";
-    case "power-": return "#111827";
-    case "canH": return "#eab308";
-    case "canL": return "#16a34a";
-    case "signal+": return "#f97316";
-    case "signal-": return "#374151";
-    case "ethernet": return "#2563eb";
-    case "usb": return "#2563eb";
+  return terminalColors[type];
+}
+
+function wirePairColors(type: Terminal["type"]) {
+  if (type === "canH" || type === "canL") {
+    return { baseColor: terminalColors["canH"], offsetColor: terminalColors["canL"] };
   }
+  if (type === "power+" || type === "power-") {
+    return { baseColor: terminalColors["power+"], offsetColor: terminalColors["power-"] };
+  }
+  if (type === "signal+" || type === "signal-") {
+    return { baseColor: terminalColors["signal+"], offsetColor: terminalColors["signal-"] };
+  }
+  return { baseColor: terminalColors[type], offsetColor: terminalColors[type] };
 }

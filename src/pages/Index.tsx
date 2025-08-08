@@ -7,15 +7,16 @@ import { HelpModal } from "@/features/diagram/components/HelpModal";
 
 const Index = () => {
   const [helpOpen, setHelpOpen] = useState(true);
+  const [paletteVisible, setPaletteVisible] = useState(true);
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <a href="#main" className="sr-only focus:not-sr-only">Skip to content</a>
-      <Toolbar />
+      <Toolbar onTogglePalette={() => setPaletteVisible((v) => !v)} paletteVisible={paletteVisible} />
       <HelpModal open={helpOpen} onOpenChange={setHelpOpen} />
       <main id="main" className="flex flex-1 w-full">
-        <Palette />
+        <Palette visible={paletteVisible} />
         <section aria-label="Canvas" id="diagram-root" className="flex-1 p-4">
-          <h1 className="sr-only">FRC 930 Wiring Designer</h1>
+          <h1 className="sr-only">930 CirciutPilot</h1>
           <DiagramCanvas />
         </section>
         <PropertiesPanel />

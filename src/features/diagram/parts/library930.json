@@ -36,13 +36,27 @@
     ]
   },
   {
-    "key": "pdh",
-    "name": "REV PDH",
-    "width": 200,
-    "height": 100,
+    "key": "pdp-ctre",
+    "name": "CTRE PDP",
+    "width": 220,
+    "height": 110,
     "terminals": [
-      { "id": "batt+", "label": "+", "type": "power+", "x": 20, "y": 80 },
-      { "id": "batt-", "label": "-", "type": "power-", "x": 40, "y": 80 }
+      { "id": "batt+", "label": "BAT+", "type": "power+", "x": 20, "y": 90 },
+      { "id": "batt-", "label": "BAT-", "type": "power-", "x": 50, "y": 90 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 160, "y": 90 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 190, "y": 90 }
+    ]
+  },
+  {
+    "key": "pdp-ctre-2",
+    "name": "CTRE PDP 2.0",
+    "width": 240,
+    "height": 120,
+    "terminals": [
+      { "id": "batt+", "label": "BAT+", "type": "power+", "x": 20, "y": 100 },
+      { "id": "batt-", "label": "BAT-", "type": "power-", "x": 50, "y": 100 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 180, "y": 100 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 210, "y": 100 }
     ]
   },
   {

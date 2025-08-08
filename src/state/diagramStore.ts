@@ -37,6 +37,7 @@ interface DiagramStoreState {
   startConnection: (ref: TerminalRef) => void;
   completeConnection: (ref: TerminalRef, options?: { gauge?: Gauge; netId?: string }) => void;
   cancelConnection: () => void;
+  setWireGauge: (id: string, gauge: Gauge) => void;
   removeSelected: () => void;
   saveDto: () => DiagramStateDto;
   loadDto: (dto: DiagramStateDto) => void;
@@ -151,6 +152,17 @@ export const useDiagramStore = create<DiagramStoreState>((set, get) => ({
     }),
 
   cancelConnection: () => set(() => ({ connectingFrom: null })),
+
+  setWireGauge: (id, gauge) =>
+    set((state) => {
+      const next = snapshot(state);
+      return {
+        ...state,
+        wires: state.wires.map((w) => (w.id === id ? { ...w, gauge } : w)),
+        past: [...state.past, next],
+        future: [],
+      };
+    }),
 
   removeSelected: () =>
     set((state) => {

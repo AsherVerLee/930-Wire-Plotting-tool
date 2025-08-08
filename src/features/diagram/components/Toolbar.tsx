@@ -2,12 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useDiagramStore } from "@/state/diagramStore";
 import { exportPNG, exportPDF, saveProject, loadProject } from "@/utils/exporters";
-import { Save, FolderOpen, Undo2, Redo2, ZoomIn, ZoomOut, Download, HelpCircle, Trash2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { Save, FolderOpen, Undo2, Redo2, ZoomIn, ZoomOut, Download, Trash2, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { useState } from "react";
 
-export const Toolbar = () => {
+interface ToolbarProps {
+  onTogglePalette: () => void;
+  paletteVisible: boolean;
+}
+
+export const Toolbar = ({ onTogglePalette, paletteVisible }: ToolbarProps) => {
   const { undo, redo, setZoom, zoom, saveDto, loadDto, removeSelected } = useDiagramStore();
-  const canvasRef = useRef<HTMLElement | null>(null);
   const [dpi, setDpi] = useState(192);
 
   const onExportPNG = async () => {
@@ -24,7 +28,10 @@ export const Toolbar = () => {
   return (
     <header className="h-16 flex items-center justify-between px-4 border-b border-border bg-gradient-to-r from-background to-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/40">
       <div className="flex items-center gap-2">
-        <span className="text-sm font-semibold">FRC 930 Wiring Designer</span>
+        <Button variant="ghost" size="icon" onClick={onTogglePalette} aria-label={paletteVisible ? "Hide parts" : "Show parts"}>
+          {paletteVisible ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}
+        </Button>
+        <span className="text-sm font-semibold">930 CirciutPilot</span>
         <Separator orientation="vertical" className="mx-2 h-6" />
         <Button variant="secondary" size="sm" onClick={async () => saveProject(saveDto())}><Save className="h-4 w-4 mr-2" />Save</Button>
         <Button variant="secondary" size="sm" onClick={async () => { const dto = await loadProject(); if (dto) loadDto(dto); }}><FolderOpen className="h-4 w-4 mr-2" />Load</Button>
