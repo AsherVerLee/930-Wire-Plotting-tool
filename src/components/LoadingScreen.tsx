@@ -46,69 +46,71 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
     return () => clearInterval(timer);
   }, [steps.length]);
 
-  // Simple circuit board with light blue angular traces and animated electrons
+  // Simple circuit board with 45-degree and straight traces like real PCBs
   const CircuitBoardSVG = () => (
-    <svg className="absolute inset-0 w-full h-full opacity-20">
+    <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 1200 800" preserveAspectRatio="none">
       <defs>
-        <pattern id="circuit" x="0" y="0" width="300" height="300" patternUnits="userSpaceOnUse">
-          {/* Angular circuit traces in light blue */}
-          <path 
-            d="M 0,80 L 60,80 L 100,40 L 160,40 L 200,80 L 300,80" 
-            stroke="rgba(147, 197, 253, 0.8)" 
-            strokeWidth="1.5" 
-            fill="none"
-          />
-          <path 
-            d="M 0,150 L 40,150 L 80,110 L 140,110 L 180,150 L 220,110 L 280,110 L 300,150" 
-            stroke="rgba(147, 197, 253, 0.6)" 
-            strokeWidth="1.2" 
-            fill="none"
-          />
-          <path 
-            d="M 0,220 L 80,220 L 120,180 L 180,180 L 220,220 L 300,220" 
-            stroke="rgba(147, 197, 253, 0.7)" 
-            strokeWidth="1.3" 
-            fill="none"
-          />
-          
-          {/* Vertical traces */}
-          <path 
-            d="M 100,0 L 100,40 M 100,60 L 100,110 M 100,130 L 100,180 M 100,200 L 100,300" 
-            stroke="rgba(147, 197, 253, 0.5)" 
-            strokeWidth="1" 
-            fill="none"
-          />
-          <path 
-            d="M 200,0 L 200,40 M 200,60 L 200,110 M 200,130 L 200,180 M 200,200 L 200,300" 
-            stroke="rgba(147, 197, 253, 0.4)" 
-            strokeWidth="1" 
-            fill="none"
-          />
-          
-          {/* Animated electrons */}
-          <circle r="2" fill="rgba(59, 130, 246, 0.9)">
-            <animateMotion dur="4s" repeatCount="indefinite">
-              <path d="M 0,80 L 60,80 L 100,40 L 160,40 L 200,80 L 300,80"/>
-            </animateMotion>
-          </circle>
-          <circle r="1.5" fill="rgba(59, 130, 246, 0.7)">
-            <animateMotion dur="3s" repeatCount="indefinite" begin="1s">
-              <path d="M 0,150 L 40,150 L 80,110 L 140,110 L 180,150 L 220,110 L 280,110 L 300,150"/>
-            </animateMotion>
-          </circle>
-          <circle r="1.8" fill="rgba(59, 130, 246, 0.8)">
-            <animateMotion dur="3.5s" repeatCount="indefinite" begin="0.5s">
-              <path d="M 0,220 L 80,220 L 120,180 L 180,180 L 220,220 L 300,220"/>
-            </animateMotion>
-          </circle>
-          
-          {/* Simple connection nodes */}
-          <circle cx="100" cy="80" r="3" fill="rgba(59, 130, 246, 0.6)" opacity="0.8"/>
-          <circle cx="200" cy="150" r="2.5" fill="rgba(59, 130, 246, 0.5)" opacity="0.7"/>
-          <circle cx="180" cy="220" r="2.8" fill="rgba(59, 130, 246, 0.6)" opacity="0.7"/>
-        </pattern>
+        <linearGradient id="traceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#60a5fa"/>
+          <stop offset="100%" stopColor="#93c5fd"/>
+        </linearGradient>
       </defs>
-      <rect width="100%" height="100%" fill="url(#circuit)"/>
+      
+      {/* Circuit board traces - 45 degree and straight lines */}
+      <g stroke="url(#traceGradient)" strokeWidth="2" fill="none" opacity="0.7" strokeLinecap="round">
+        {/* Horizontal traces */}
+        <line x1="0" y1="150" x2="1200" y2="150" />
+        <line x1="0" y1="250" x2="1200" y2="250" />
+        <line x1="0" y1="350" x2="1200" y2="350" />
+        <line x1="0" y1="450" x2="1200" y2="450" />
+        <line x1="0" y1="550" x2="1200" y2="550" />
+        <line x1="0" y1="650" x2="1200" y2="650" />
+        
+        {/* Vertical traces */}
+        <line x1="200" y1="0" x2="200" y2="800" />
+        <line x1="350" y1="0" x2="350" y2="800" />
+        <line x1="500" y1="0" x2="500" y2="800" />
+        <line x1="650" y1="0" x2="650" y2="800" />
+        <line x1="800" y1="0" x2="800" y2="800" />
+        <line x1="950" y1="0" x2="950" y2="800" />
+        
+        {/* 45-degree diagonal traces */}
+        <line x1="0" y1="0" x2="400" y2="400" />
+        <line x1="200" y1="0" x2="600" y2="400" />
+        <line x1="400" y1="0" x2="800" y2="400" />
+        <line x1="600" y1="0" x2="1000" y2="400" />
+        <line x1="800" y1="0" x2="1200" y2="400" />
+        
+        {/* -45-degree diagonal traces */}
+        <line x1="400" y1="0" x2="0" y2="400" />
+        <line x1="600" y1="0" x2="200" y2="400" />
+        <line x1="800" y1="0" x2="400" y2="400" />
+        <line x1="1000" y1="0" x2="600" y2="400" />
+        <line x1="1200" y1="0" x2="800" y2="400" />
+        
+        {/* More 45-degree traces for density */}
+        <line x1="0" y1="400" x2="400" y2="800" />
+        <line x1="200" y1="400" x2="600" y2="800" />
+        <line x1="400" y1="400" x2="800" y2="800" />
+        <line x1="600" y1="400" x2="1000" y2="800" />
+        <line x1="800" y1="400" x2="1200" y2="800" />
+        
+        <line x1="400" y1="400" x2="0" y2="800" />
+        <line x1="600" y1="400" x2="200" y2="800" />
+        <line x1="800" y1="400" x2="400" y2="800" />
+        <line x1="1000" y1="400" x2="600" y2="800" />
+        <line x1="1200" y1="400" x2="800" y2="800" />
+      </g>
+      
+      {/* Connection points at intersections */}
+      <g fill="#60a5fa" opacity="0.8">
+        {/* Grid intersection points */}
+        {[150, 250, 350, 450, 550, 650].map(y => 
+          [200, 350, 500, 650, 800, 950].map(x => (
+            <circle key={`${x}-${y}`} cx={x} cy={y} r="3" />
+          ))
+        )}
+      </g>
     </svg>
   );
 
@@ -119,14 +121,18 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
       className="fixed inset-0 bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center z-50"
       style={{ perspective: '1000px' }}
     >
-      {/* Lighter blue circuit board background */}
+      {/* Enhanced circuit board background with layered gradients */}
       <motion.div
         initial={{ opacity: 0, scale: 1.1 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 3, ease: "easeOut" }}
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(59, 130, 246, 0.1) 0%, rgba(30, 64, 175, 0.3) 100%)'
+          background: `
+            radial-gradient(ellipse at 25% 25%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 75% 75%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at center, rgba(59, 130, 246, 0.08) 0%, rgba(30, 64, 175, 0.2) 70%, rgba(15, 23, 42, 0.4) 100%)
+          `
         }}
       >
         <CircuitBoardSVG />
@@ -167,7 +173,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
       {/* 3D Card Container with stylish entrance */}
       <motion.div
-        className="relative"
+        className="relative card-container"
         style={{ 
           width: '320px', 
           height: '380px', 
@@ -195,39 +201,36 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
         onMouseEnter={(e) => {
           const card = e.currentTarget.querySelector('.card-inner') as HTMLElement;
           if (card) {
-            card.style.transform = 'rotate3d(1, 1, 0, 25deg)';
-            card.style.boxShadow = '0 40px 60px -20px rgba(59, 130, 246, 0.4), 0 20px 40px rgba(59, 130, 246, 0.2)';
+            card.style.transform = 'rotate3d(1, 1, 0, 30deg)';
+            card.style.boxShadow = '0 50px 80px -20px rgba(59, 130, 246, 0.4), 0 30px 60px rgba(59, 130, 246, 0.3)';
           }
-          // Animate social buttons
+          // Animate social buttons with staggered delays
           const buttons = e.currentTarget.querySelectorAll('.social-btn');
           buttons.forEach((btn: any, i) => {
             setTimeout(() => {
-              btn.style.transform = 'translate3d(0, 0, 50px)';
-              btn.style.boxShadow = '0 15px 25px rgba(59, 130, 246, 0.3)';
-            }, i * 100);
+              btn.style.transform = 'translate3d(0, 0, 15px)';
+              btn.style.boxShadow = '0 20px 25px rgba(59, 130, 246, 0.4)';
+            }, i * 100 + 100); // Much faster staggered timing
           });
-          // Animate logo circles with enhanced ripple effect
+          // Animate logo circles with subtle movement
           const circles = e.currentTarget.querySelectorAll('.logo-circle');
           circles.forEach((circle: any, i) => {
-            setTimeout(() => {
-              const currentZ = 30 + (i * 25);
-              circle.style.transform = `translate3d(${(i * 2) - 5}px, ${(i * 2) - 5}px, ${currentZ + 40}px) scale(1.15)`;
-              circle.style.background = `
-                linear-gradient(145deg, 
-                  rgba(255, 255, 255, 0.4) 0%,
-                  rgba(255, 255, 255, 0.2) 25%,
-                  rgba(0, 191, 255, 0.3) 50%,
-                  rgba(255, 255, 255, 0.1) 75%,
-                  rgba(0, 191, 255, 0.4) 100%
-                )
-              `;
-              circle.style.boxShadow = `
-                0 12px 48px rgba(0, 191, 255, 0.4),
-                inset 0 2px 0 rgba(255, 255, 255, 0.5),
-                inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-                0 0 40px rgba(0, 191, 255, 0.6)
-              `;
-            }, i * 100);
+            if (i === 0) {
+              // Circle 1: 20px -> 35px
+              circle.style.transform = 'translate3d(0, 0, 35px)';
+            } else if (i === 1) {
+              // Circle 2: 40px -> 50px
+              circle.style.transform = 'translate3d(0, 0, 50px)';
+            } else if (i === 2) {
+              // Circle 3: 60px -> 70px
+              circle.style.transform = 'translate3d(0, 0, 70px)';
+            } else if (i === 3) {
+              // Circle 4: 80px -> 90px
+              circle.style.transform = 'translate3d(0, 0, 90px)';
+            } else if (i === 4) {
+              // Circle 5: 100px -> 110px
+              circle.style.transform = 'translate3d(0, 0, 110px)';
+            }
           });
         }}
         onMouseLeave={(e) => {
@@ -242,32 +245,31 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
             btn.style.transform = 'translate3d(0, 0, 0px)';
             btn.style.boxShadow = '0 8px 16px rgba(59, 130, 246, 0.2)';
           });
-          // Reset logo circles
+          // Reset logo circles to original positions
           const circles = e.currentTarget.querySelectorAll('.logo-circle');
           circles.forEach((circle: any, i) => {
-            const currentZ = 30 + (i * 25);
-            circle.style.transform = `translate3d(${i * 2}px, ${i * 2}px, ${currentZ}px) scale(1)`;
-            circle.style.background = `
-              linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.25) 0%,
-                rgba(255, 255, 255, 0.1) 25%,
-                rgba(0, 191, 255, 0.15) 50%,
-                rgba(255, 255, 255, 0.05) 75%,
-                rgba(0, 191, 255, 0.2) 100%
-              )
-            `;
-            circle.style.boxShadow = `
-              0 8px 32px rgba(0, 191, 255, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.1),
-              0 0 20px rgba(0, 191, 255, 0.3)
-            `;
+            if (i === 0) {
+              // Circle 1
+              circle.style.transform = 'translate3d(0, 0, 20px)';
+            } else if (i === 1) {
+              // Circle 2
+              circle.style.transform = 'translate3d(0, 0, 40px)';
+            } else if (i === 2) {
+              // Circle 3
+              circle.style.transform = 'translate3d(0, 0, 60px)';
+            } else if (i === 3) {
+              // Circle 4
+              circle.style.transform = 'translate3d(0, 0, 80px)';
+            } else if (i === 4) {
+              // Circle 5
+              circle.style.transform = 'translate3d(0, 0, 100px)';
+            }
           });
         }}
       >
         {/* Main Card */}
         <div 
-          className="card-inner relative w-full h-full rounded-[50px] overflow-hidden transition-all duration-500 ease-in-out"
+          className="card-inner relative w-full h-full rounded-[50px] transition-all duration-500 ease-in-out"
           style={{
             background: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(147, 51, 234) 100%)',
             transformStyle: 'preserve-3d',
@@ -286,57 +288,122 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
             }}
           />
 
-          {/* Enhanced glassy logo circles that pop off the card */}
-          <div className="absolute top-0 right-0" style={{ transformStyle: 'preserve-3d' }}>
-            {[1, 2, 3, 4, 5].map((num, i) => (
-              <div
-                key={num}
-                className={`logo-circle absolute rounded-full transition-all duration-500 ease-in-out`}
-                style={{
-                  width: `${170 - (i * 30)}px`,
-                  height: `${170 - (i * 30)}px`,
-                  top: `${8 + (i * 5)}px`,
-                  right: `${8 + (i * 5)}px`,
-                  background: `
-                    linear-gradient(145deg, 
-                      rgba(255, 255, 255, 0.25) 0%,
-                      rgba(255, 255, 255, 0.1) 25%,
-                      rgba(0, 191, 255, 0.15) 50%,
-                      rgba(255, 255, 255, 0.05) 75%,
-                      rgba(0, 191, 255, 0.2) 100%
-                    )
-                  `,
-                  backdropFilter: 'blur(15px)',
-                  WebkitBackdropFilter: 'blur(15px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: `
-                    0 8px 32px rgba(0, 191, 255, 0.2),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
-                    0 0 20px rgba(0, 191, 255, 0.3)
-                  `,
-                  transform: `translate3d(${i * 2}px, ${i * 2}px, ${30 + (i * 25)}px)`,
-                  transformStyle: 'preserve-3d',
-                  transitionDelay: `${i * 0.1}s`
-                }}
+          {/* Logo bubbles - positioned more on the card */}
+          <div className="absolute" style={{ 
+            top: '10px', 
+            right: '10px', 
+            transformStyle: 'preserve-3d',
+            width: '200px',
+            height: '200px'
+          }}>
+            {/* Circle 1 - largest */}
+            <div
+              className="logo-circle absolute rounded-full"
+              style={{
+                width: '170px',
+                height: '170px',
+                top: '5px',
+                right: '5px',
+                background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.25) 100%)',
+                backdropFilter: 'blur(4px)',
+                WebkitBackdropFilter: 'blur(4px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: 'rgba(255, 255, 255, 0.1) -5px 5px 15px 0px',
+                transform: 'translate3d(0, 0, 20px)',
+                transformStyle: 'preserve-3d',
+                transition: 'all 0.5s ease-in-out'
+              }}
+            />
+            
+            {/* Circle 2 */}
+            <div
+              className="logo-circle absolute rounded-full"
+              style={{
+                width: '140px',
+                height: '140px',
+                top: '20px',
+                right: '20px',
+                background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.25) 100%)',
+                backdropFilter: 'blur(3px)',
+                WebkitBackdropFilter: 'blur(3px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: 'rgba(255, 255, 255, 0.1) -5px 5px 15px 0px',
+                transform: 'translate3d(0, 0, 40px)',
+                transformStyle: 'preserve-3d',
+                transition: 'all 0.5s ease-in-out',
+                transitionDelay: '0.4s'
+              }}
+            />
+            
+            {/* Circle 3 */}
+            <div
+              className="logo-circle absolute rounded-full"
+              style={{
+                width: '110px',
+                height: '110px',
+                top: '35px',
+                right: '35px',
+                background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.25) 100%)',
+                backdropFilter: 'blur(2px)',
+                WebkitBackdropFilter: 'blur(2px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: 'rgba(255, 255, 255, 0.1) -5px 5px 15px 0px',
+                transform: 'translate3d(0, 0, 60px)',
+                transformStyle: 'preserve-3d',
+                transition: 'all 0.5s ease-in-out',
+                transitionDelay: '0.8s'
+              }}
+            />
+            
+            {/* Circle 4 */}
+            <div
+              className="logo-circle absolute rounded-full"
+              style={{
+                width: '80px',
+                height: '80px',
+                top: '50px',
+                right: '50px',
+                background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.25) 100%)',
+                backdropFilter: 'blur(1px)',
+                WebkitBackdropFilter: 'blur(1px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: 'rgba(255, 255, 255, 0.1) -5px 5px 15px 0px',
+                transform: 'translate3d(0, 0, 80px)',
+                transformStyle: 'preserve-3d',
+                transition: 'all 0.5s ease-in-out',
+                transitionDelay: '1.2s'
+              }}
+            />
+            
+            {/* Circle 5 - smallest with logo (no blur for text readability) */}
+            <div
+              className="logo-circle absolute rounded-full flex items-center justify-center"
+              style={{
+                width: '50px',
+                height: '50px',
+                top: '65px',
+                right: '65px',
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                backdropFilter: 'blur(0.5px)',
+                WebkitBackdropFilter: 'blur(0.5px)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: 'rgba(255, 255, 255, 0.1) -5px 5px 15px 0px, inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                transform: 'translate3d(0, 0, 100px)',
+                transformStyle: 'preserve-3d',
+                transition: 'all 0.5s ease-in-out',
+                transitionDelay: '1.6s',
+                color: '#ffffff'
+              }}
+            >
+              <motion.span
+                className="text-xs font-black"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 1.8, duration: 0.5, ease: "easeOut" }}
               >
-                {i === 4 && (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <motion.img 
-                      src="/favicon.ico" 
-                      alt="CircuitPilot Logo" 
-                      className="w-10 h-10"
-                      style={{ 
-                        filter: 'brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))',
-                      }}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
+                930
+              </motion.span>
+            </div>
           </div>
 
           {/* Content */}
@@ -400,12 +467,12 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
             <div className="flex gap-4" style={{ transformStyle: 'preserve-3d' }}>
               {/* GitHub Button */}
               <motion.button
-                className="social-btn w-12 h-12 bg-white rounded-full flex items-center justify-center transition-all duration-200 ease-in-out border border-white/10"
+                className="social-btn w-12 h-12 bg-white rounded-full flex items-center justify-center border border-white/10"
                 style={{
                   boxShadow: '0 8px 16px rgba(59, 130, 246, 0.2)',
                   transformStyle: 'preserve-3d',
                   transform: 'translate3d(0, 0, 0px)',
-                  transitionDelay: '0.4s'
+                  transition: 'transform 0.2s ease-in-out 0.4s, box-shadow 0.2s ease-in-out 0.4s, background-color 0.2s ease-in-out'
                 }}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -448,16 +515,16 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
               {/* Team 930 Button */}
               <motion.button
-                className="social-btn w-12 h-12 bg-white rounded-full flex items-center justify-center transition-all duration-200 ease-in-out border border-white/10"
+                className="social-btn w-12 h-12 bg-white rounded-full flex items-center justify-center border border-white/10"
                 style={{
                   boxShadow: '0 8px 16px rgba(59, 130, 246, 0.2)',
                   transformStyle: 'preserve-3d',
                   transform: 'translate3d(0, 0, 0px)',
-                  transitionDelay: '0.6s'
+                  transition: 'transform 0.2s ease-in-out 0.6s, box-shadow 0.2s ease-in-out 0.6s, background-color 0.2s ease-in-out'
                 }}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.9, duration: 0.3 }}
+                transition={{ delay: 1.1, duration: 0.3 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open('https://www.team930.com', '_blank');
@@ -493,38 +560,99 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
               </motion.button>
             </div>
 
-            {/* Continue Button */}
+            {/* Continue Button - Oval button like social buttons */}
             {isLoadingComplete && (
-              <motion.div
-                className="flex items-center"
+              <motion.button
+                className="social-btn flex items-center gap-2 px-6 py-3 bg-white rounded-full border border-white/10"
                 style={{
-                  transition: 'all 0.2s ease-in-out',
-                  transformStyle: 'preserve-3d'
+                  boxShadow: '0 8px 16px rgba(59, 130, 246, 0.2)',
+                  transformStyle: 'preserve-3d',
+                  transform: 'translate3d(0, 0, 0px)',
+                  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out'
                 }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
+                initial={{ opacity: 0, x: 20, scale: 0 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut", delay: 1.4 }}
+                onClick={handleContinue}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 10px)';
+                  e.currentTarget.style.backgroundColor = '#3b82f6';
+                  e.currentTarget.style.transform = 'translate3d(0, 0, 10px) scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(59, 130, 246, 0.4)';
+                  const span = e.currentTarget.querySelector('span');
+                  const svg = e.currentTarget.querySelector('svg');
+                  if (span) span.style.color = '#ffffff';
+                  if (svg) svg.style.stroke = '#ffffff';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px)';
+                  e.currentTarget.style.backgroundColor = '#ffffff';
+                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(59, 130, 246, 0.2)';
+                  const span = e.currentTarget.querySelector('span');
+                  const svg = e.currentTarget.querySelector('svg');
+                  if (span) span.style.color = '#3b82f6';
+                  if (svg) svg.style.stroke = '#3b82f6';
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.backgroundColor = '#1d4ed8';
+                  e.currentTarget.style.transform = 'translate3d(0, 0, 5px) scale(0.98)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.backgroundColor = '#3b82f6';
+                  e.currentTarget.style.transform = 'translate3d(0, 0, 10px) scale(1.05)';
                 }}
               >
-                <button
-                  onClick={handleContinue}
-                  className="bg-transparent border-none text-white font-bold text-sm mr-2"
-                >
+                <span className="font-bold text-sm transition-colors duration-200" style={{ color: '#3b82f6' }}>
                   Continue
-                </button>
-                <svg className="w-4 h-4 fill-none stroke-white" strokeWidth="3" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                </span>
+                <svg 
+                  className="w-4 h-4 fill-none transition-colors duration-200" 
+                  strokeWidth="3" 
+                  viewBox="0 0 24 24" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  style={{ stroke: '#3b82f6' }}
+                >
                   <path d="m6 9 6 6 6-6"></path>
                 </svg>
-              </motion.div>
+              </motion.button>
             )}
           </div>
         </div>
       </motion.div>
+      
+      <style>{`
+        .logo-circle {
+          backface-visibility: hidden;
+        }
+        
+        .card-container:hover .logo-circle:nth-child(1) {
+          transform: translate3d(5px, -5px, 35px) scale(1.05) !important;
+        }
+        
+        .card-container:hover .logo-circle:nth-child(2) {
+          transform: translate3d(4px, -4px, 50px) scale(1.04) !important;
+        }
+        
+        .card-container:hover .logo-circle:nth-child(3) {
+          transform: translate3d(3px, -3px, 70px) scale(1.03) !important;
+        }
+        
+        .card-container:hover .logo-circle:nth-child(4) {
+          transform: translate3d(2px, -2px, 90px) scale(1.02) !important;
+        }
+        
+        .card-container:hover .logo-circle:nth-child(5) {
+          transform: translate3d(0px, 0px, 110px) scale(1.01) !important;
+        }
+        
+        /* Enhanced card hover effect */
+        .card-container:hover .card-inner {
+          transform: perspective(800px) rotate3d(1, 1, 0, 35deg) !important;
+          box-shadow: 
+            0 0 120px rgba(59, 130, 246, 0.4),
+            0 40px 80px rgba(0, 0, 0, 0.6) !important;
+        }
+      `}</style>
     </motion.div>
   );
 };

@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useState, useEffect } from "react";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { LoadingScreen } from "@/components/LoadingScreen_new";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
