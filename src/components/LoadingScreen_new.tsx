@@ -24,7 +24,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
     setIsExiting(true);
     setTimeout(() => {
       onComplete();
-    }, 500);
+    }, 1200); // Increased to match the fade duration
   };
 
   useEffect(() => {
@@ -298,6 +298,8 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={isExiting ? { opacity: 0 } : { opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: isExiting ? 1.2 : 0.5, ease: "easeInOut" }}
       className="fixed inset-0 bg-black flex items-center justify-center z-50"
       style={{ perspective: '1000px' }}
       onMouseMove={handleMouseMove}
@@ -305,8 +307,8 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
       {/* Modern Gradient Background */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
+        animate={isExiting ? { opacity: 0, scale: 0.8 } : { opacity: 1, scale: 1 }}
+        transition={{ duration: isExiting ? 1.2 : 2, ease: "easeOut" }}
         className="absolute inset-0 z-0"
       >
         <ModernGradientBackground />
@@ -314,116 +316,62 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
       {/* 3D Card Container */}
       <motion.div
-        className="relative z-10"
-        style={{ 
-          width: '320px', 
-          height: '380px', 
-          perspective: '1000px' 
-        }}
+        className="parent"
         initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        animate={isExiting ? { scale: 0.7, opacity: 0, y: 50 } : { scale: 1, opacity: 1, y: 0 }}
+        transition={{ duration: isExiting ? 1.2 : 0.8, ease: "easeOut" }}
       >
-        {/* Main Card */}
-        <div 
-          className="card-inner relative w-full h-full rounded-[50px] overflow-hidden transition-all duration-500 ease-in-out"
-          style={{
-            background: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(147, 51, 234) 100%)',
-            transformStyle: 'preserve-3d',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 10px 25px rgba(59, 130, 246, 0.1)'
-          }}
-        >
-          {/* Glass overlay effect */}
-          <div 
-            className="absolute inset-2 rounded-[45px] border-l border-b border-white/30"
-            style={{
-              background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%)',
-              transform: 'translate3d(0px, 0px, 25px)',
-              borderTopRightRadius: '100%',
-              transformStyle: 'preserve-3d',
-              transition: 'all 0.5s ease-in-out'
-            }}
-          />
-
-          {/* Logo circles in top-right - exact structure from your 3D code */}
-          <div className="absolute top-0 right-0" style={{ transformStyle: 'preserve-3d' }}>
-            <span className="logo-circle circle1"></span>
-            <span className="logo-circle circle2"></span>
-            <span className="logo-circle circle3"></span>
-            <span className="logo-circle circle4"></span>
-            <span className="logo-circle circle5 flex items-center justify-center">
-              <span className="text-xs font-black text-white">930</span>
+        <div className="card">
+          <div className="logo">
+            <span className="circle circle1"></span>
+            <span className="circle circle2"></span>
+            <span className="circle circle3"></span>
+            <span className="circle circle4"></span>
+            <span className="circle circle5">
+              <span className="team-logo">930</span>
             </span>
           </div>
-
-          {/* Content */}
-          <div 
-            className="absolute text-white px-8 pt-24"
-            style={{
-              transform: 'translate3d(0, 0, 26px)',
-              transformStyle: 'preserve-3d'
-            }}
-          >
-            <motion.h1 
-              className="text-2xl font-black mb-2"
+          <div className="glass"></div>
+          <div className="content">
+            <motion.span 
+              className="title"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              style={{ color: '#ffffff' }}
             >
               CircuitPilot
-            </motion.h1>
-            <motion.p 
-              className="text-white/80 text-sm leading-relaxed"
+            </motion.span>
+            <motion.span 
+              className="text"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
               Professional robot wiring design tool for FRC Team 930
-            </motion.p>
+            </motion.span>
+            
+            {/* Progress Section */}
+            <motion.div 
+              className="progress-section"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <div className="progress-bar">
+                <motion.div
+                  className="progress-fill"
+                  style={{ width: `${progress}%` }}
+                  transition={{ duration: 0.1 }}
+                />
+              </div>
+              <p className="progress-text">{steps[currentStep]}</p>
+            </motion.div>
           </div>
-
-          {/* Progress Section */}
-          <motion.div 
-            className="absolute left-8 right-8"
-            style={{ 
-              top: '60%',
-              transform: 'translate3d(0, 0, 26px)',
-              transformStyle: 'preserve-3d'
-            }}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            <div className="bg-white/20 rounded-full h-2 overflow-hidden mb-3">
-              <motion.div
-                className="h-full bg-white rounded-full"
-                style={{ width: `${progress}%` }}
-                transition={{ duration: 0.1 }}
-              />
-            </div>
-            <p className="text-white/70 text-xs">{steps[currentStep]}</p>
-          </motion.div>
-
-          {/* Bottom section with buttons */}
-          <div 
-            className="absolute bottom-5 left-5 right-5 flex items-center justify-between"
-            style={{
-              transform: 'translate3d(0, 0, 26px)',
-              transformStyle: 'preserve-3d'
-            }}
-          >
-            {/* Social buttons - made larger */}
-            <div className="flex gap-4" style={{ transformStyle: 'preserve-3d' }}>
+          <div className="bottom">
+            <div className="social-buttons-container">
               {/* GitHub Button */}
               <motion.button
-                className="social-btn w-12 h-12 bg-white rounded-full flex items-center justify-center transition-all duration-200 ease-in-out border border-white/10"
-                style={{
-                  boxShadow: '0 8px 16px rgba(59, 130, 246, 0.2)',
-                  transformStyle: 'preserve-3d',
-                  transform: 'translate3d(0, 0, 0px)',
-                  transitionDelay: '0.4s'
-                }}
+                className="social-button"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.3 }}
@@ -431,47 +379,15 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
                   e.stopPropagation();
                   window.open('https://github.com/AsherVerLee/930-Wire-Plotting-tool', '_blank');
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#000000';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(1.1)';
-                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.3)';
-                  const svg = e.currentTarget.querySelector('svg');
-                  if (svg) svg.style.fill = '#ffffff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#ffffff';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(1)';
-                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(59, 130, 246, 0.2)';
-                  const svg = e.currentTarget.querySelector('svg');
-                  if (svg) svg.style.fill = '#3b82f6';
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.backgroundColor = '#fde047';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(0.95)';
-                  const svg = e.currentTarget.querySelector('svg');
-                  if (svg) svg.style.fill = '#000000';
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.backgroundColor = '#000000';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(1.1)';
-                  const svg = e.currentTarget.querySelector('svg');
-                  if (svg) svg.style.fill = '#ffffff';
-                }}
               >
-                <svg className="w-6 h-6 transition-colors duration-200" viewBox="0 0 24 24" style={{ fill: '#3b82f6' }}>
+                <svg className="svg" viewBox="0 0 24 24">
                   <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                 </svg>
               </motion.button>
 
               {/* Team 930 Button */}
               <motion.button
-                className="social-btn w-12 h-12 bg-white rounded-full flex items-center justify-center transition-all duration-200 ease-in-out border border-white/10"
-                style={{
-                  boxShadow: '0 8px 16px rgba(59, 130, 246, 0.2)',
-                  transformStyle: 'preserve-3d',
-                  transform: 'translate3d(0, 0, 0px)',
-                  transitionDelay: '0.6s'
-                }}
+                className="social-button"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.9, duration: 0.3 }}
@@ -479,99 +395,43 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
                   e.stopPropagation();
                   window.open('https://www.team930.com', '_blank');
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#000000';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(1.1)';
-                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.3)';
-                  const span = e.currentTarget.querySelector('span');
-                  if (span) span.style.color = '#ffffff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#ffffff';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(1)';
-                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(59, 130, 246, 0.2)';
-                  const span = e.currentTarget.querySelector('span');
-                  if (span) span.style.color = '#3b82f6';
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.backgroundColor = '#fde047';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(0.95)';
-                  const span = e.currentTarget.querySelector('span');
-                  if (span) span.style.color = '#000000';
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.backgroundColor = '#000000';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(1.1)';
-                  const span = e.currentTarget.querySelector('span');
-                  if (span) span.style.color = '#ffffff';
-                }}
               >
-                <span className="text-sm font-bold transition-colors duration-200" style={{ color: '#3b82f6' }}>930</span>
+                <span className="team-number">930</span>
               </motion.button>
             </div>
-
+            
             {/* Continue Button */}
             {isLoadingComplete && (
-              <motion.button
-                className="continue-btn flex items-center gap-2 px-6 py-3 bg-white rounded-full border border-white/10"
-                style={{
-                  boxShadow: '0 8px 16px rgba(59, 130, 246, 0.2)',
-                  transformStyle: 'preserve-3d',
-                  transform: 'translate3d(0, 0, 0px)',
-                  transition: 'all 0.2s ease-in-out'
-                }}
-                initial={{ opacity: 0, x: 20, scale: 0 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: 1.4 }}
-                onClick={handleContinue}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#3b82f6';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 10px) scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(59, 130, 246, 0.4)';
-                  const span = e.currentTarget.querySelector('span');
-                  const svg = e.currentTarget.querySelector('svg');
-                  if (span) span.style.color = '#ffffff';
-                  if (svg) svg.style.stroke = '#ffffff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#ffffff';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 0px) scale(1)';
-                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(59, 130, 246, 0.2)';
-                  const span = e.currentTarget.querySelector('span');
-                  const svg = e.currentTarget.querySelector('svg');
-                  if (span) span.style.color = '#3b82f6';
-                  if (svg) svg.style.stroke = '#3b82f6';
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.backgroundColor = '#1d4ed8';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 5px) scale(0.98)';
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.backgroundColor = '#3b82f6';
-                  e.currentTarget.style.transform = 'translate3d(0, 0, 10px) scale(1.05)';
-                }}
-              >
-                <span className="font-bold text-sm transition-colors duration-200" style={{ color: '#3b82f6' }}>
-                  Continue
-                </span>
-                <svg 
-                  className="w-4 h-4 fill-none transition-colors duration-200" 
-                  strokeWidth="3" 
-                  viewBox="0 0 24 24" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                  style={{ stroke: '#3b82f6' }}
+              <div className="view-more">
+                <motion.button
+                  className="view-more-button"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  onClick={handleContinue}
                 >
+                  Continue
+                </motion.button>
+                <svg className="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m6 9 6 6 6-6"></path>
                 </svg>
-              </motion.button>
+              </div>
             )}
           </div>
         </div>
       </motion.div>
       
       <style>{`
-        .card-inner {
+        /* Based on Uiverse.io by Smit-Prajapati */
+        .parent {
+          width: 320px;
+          height: 380px;
+          perspective: 1000px;
+          position: relative;
+          z-index: 10;
+        }
+
+        .card {
           height: 100%;
           border-radius: 50px;
           background: linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(147, 51, 234) 100%);
@@ -593,64 +453,100 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
           transition: all 0.5s ease-in-out;
         }
 
-        .logo-circle {
+        .content {
+          padding: 100px 60px 0px 30px;
+          transform: translate3d(0, 0, 26px);
+        }
+
+        .content .title {
           display: block;
+          color: #ffffff;
+          font-weight: 900;
+          font-size: 20px;
+        }
+
+        .content .text {
+          display: block;
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 15px;
+          margin-top: 20px;
+        }
+
+        .progress-section {
+          margin-top: 40px;
+        }
+
+        .progress-bar {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 10px;
+          height: 8px;
+          overflow: hidden;
+          margin-bottom: 12px;
+        }
+
+        .progress-fill {
+          height: 100%;
+          background: white;
+          border-radius: 10px;
+          transition: width 0.1s ease;
+        }
+
+        .progress-text {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 12px;
+          margin: 0;
+        }
+
+        .bottom {
+          padding: 10px 12px;
+          transform-style: preserve-3d;
           position: absolute;
-          aspect-ratio: 1;
-          border-radius: 50%;
-          top: 0;
-          right: 0;
-          box-shadow: rgba(255, 255, 255, 0.1) -5px 5px 15px 0px;
-          backdrop-filter: blur(1px);
-          -webkit-backdrop-filter: blur(1px);
-          background: transparent;
-          transition: all 0.5s ease-in-out;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo-circle:nth-child(1) {
-          width: 170px;
-          transform: translate3d(0, 0, 20px);
-          top: 8px;
-          right: 8px;
-        }
-
-        .logo-circle:nth-child(2) {
-          width: 140px;
-          transform: translate3d(0, 0, 40px);
-          top: 20px;
+          bottom: 20px;
+          left: 20px;
           right: 20px;
-          transition-delay: 0.4s;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          transform: translate3d(0, 0, 26px);
         }
 
-        .logo-circle:nth-child(3) {
-          width: 110px;
-          transform: translate3d(0, 0, 60px);
-          top: 35px;
-          right: 35px;
-          transition-delay: 0.8s;
+        .bottom .view-more {
+          display: flex;
+          align-items: center;
+          width: 40%;
+          justify-content: flex-end;
+          transition: all 0.2s ease-in-out;
         }
 
-        .logo-circle:nth-child(4) {
-          width: 80px;
-          transform: translate3d(0, 0, 80px);
-          top: 50px;
-          right: 50px;
-          transition-delay: 1.2s;
+        .bottom .view-more:hover {
+          transform: translate3d(0, 0, 10px);
         }
 
-        .logo-circle:nth-child(5) {
-          width: 50px;
-          transform: translate3d(0, 0, 100px);
-          top: 65px;
-          right: 65px;
-          display: grid;
-          place-content: center;
-          transition-delay: 1.6s;
+        .bottom .view-more .view-more-button {
+          background: none;
+          border: none;
+          color: #ffffff;
+          font-weight: bolder;
+          font-size: 12px;
+          cursor: pointer;
         }
 
-        .social-btn {
-          width: 48px;
+        .bottom .view-more .svg {
+          fill: none;
+          stroke: #ffffff;
+          stroke-width: 3px;
+          max-height: 15px;
+          width: 15px;
+        }
+
+        .bottom .social-buttons-container {
+          display: flex;
+          gap: 10px;
+          transform-style: preserve-3d;
+        }
+
+        .bottom .social-buttons-container .social-button {
+          width: 40px;
           aspect-ratio: 1;
           padding: 8px;
           background: rgb(255, 255, 255);
@@ -658,51 +554,147 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
           border: none;
           display: grid;
           place-content: center;
-          box-shadow: rgba(59, 130, 246, 0.3) 0px 7px 5px -5px;
-          transition: all 0.2s ease-in-out;
+          box-shadow: rgba(59, 130, 246, 0.5) 0px 7px 5px -5px;
+          cursor: pointer;
         }
 
-        .social-btn:first-child {
+        .bottom .social-buttons-container .social-button:first-child {
           transition: transform 0.2s ease-in-out 0.4s, box-shadow 0.2s ease-in-out 0.4s, background-color 0.2s ease-in-out;
         }
 
-        .social-btn:nth-child(2) {
+        .bottom .social-buttons-container .social-button:nth-child(2) {
           transition: transform 0.2s ease-in-out 0.6s, box-shadow 0.2s ease-in-out 0.6s, background-color 0.2s ease-in-out;
         }
 
-        .continue-btn {
-          transition: all 0.2s ease-in-out;
+        .bottom .social-buttons-container .social-button .svg {
+          width: 20px;
+          fill: #3b82f6;
         }
 
-        .continue-btn:hover {
-          transform: translate3d(0, 0, 10px);
+        .bottom .social-buttons-container .social-button .team-number {
+          color: #3b82f6;
+          font-weight: bold;
+          font-size: 14px;
         }
 
-        /* Hover effects */
-        .relative:hover .card-inner {
-          transform: rotate3d(1, 1, 0, 30deg) !important;
-          box-shadow: rgba(59, 130, 246, 0.3) 30px 50px 25px -40px, rgba(59, 130, 246, 0.1) 0px 25px 30px 0px !important;
+        .bottom .social-buttons-container .social-button:hover {
+          background: black;
         }
 
-        .relative:hover .social-btn {
-          transform: translate3d(0, 0, 50px) !important;
-          box-shadow: rgba(59, 130, 246, 0.2) -5px 20px 10px 0px !important;
+        .bottom .social-buttons-container .social-button:hover .svg {
+          fill: white;
         }
 
-        .relative:hover .logo-circle:nth-child(2) {
-          transform: translate3d(0, 0, 60px) !important;
+        .bottom .social-buttons-container .social-button:hover .team-number {
+          color: white;
         }
 
-        .relative:hover .logo-circle:nth-child(3) {
-          transform: translate3d(0, 0, 80px) !important;
+        .bottom .social-buttons-container .social-button:active {
+          background: rgb(255, 234, 0);
         }
 
-        .relative:hover .logo-circle:nth-child(4) {
-          transform: translate3d(0, 0, 100px) !important;
+        .bottom .social-buttons-container .social-button:active .svg {
+          fill: black;
         }
 
-        .relative:hover .logo-circle:nth-child(5) {
-          transform: translate3d(0, 0, 120px) !important;
+        .bottom .social-buttons-container .social-button:active .team-number {
+          color: black;
+        }
+
+        .logo {
+          position: absolute;
+          right: 0;
+          top: 0;
+          transform-style: preserve-3d;
+        }
+
+        .logo .circle {
+          display: block;
+          position: absolute;
+          aspect-ratio: 1;
+          border-radius: 50%;
+          top: 0;
+          right: 0;
+          box-shadow: rgba(255, 255, 255, 0.1) -5px 5px 15px 0px;
+          -webkit-backdrop-filter: blur(1px);
+          backdrop-filter: blur(1px);
+          background: transparent;
+          transition: all 0.5s ease-in-out;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo .circle1 {
+          width: 170px;
+          transform: translate3d(0, 0, 20px);
+          top: 8px;
+          right: 8px;
+        }
+
+        .logo .circle2 {
+          width: 140px;
+          transform: translate3d(0, 0, 40px);
+          top: 13px;
+          right: 13px;
+          transition-delay: 0.4s;
+        }
+
+        .logo .circle3 {
+          width: 110px;
+          transform: translate3d(0, 0, 60px);
+          top: 23px;
+          right: 23px;
+          transition-delay: 0.8s;
+        }
+
+        .logo .circle4 {
+          width: 80px;
+          transform: translate3d(0, 0, 80px);
+          top: 33px;
+          right: 33px;
+          transition-delay: 1.2s;
+        }
+
+        .logo .circle5 {
+          width: 50px;
+          transform: translate3d(0, 0, 100px);
+          top: 43px;
+          right: 43px;
+          display: grid;
+          place-content: center;
+          transition-delay: 1.6s;
+        }
+
+        .logo .circle5 .team-logo {
+          color: white;
+          font-weight: 900;
+          font-size: 16px;
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .parent:hover .card {
+          transform: rotate3d(1, 1, 0, 30deg);
+          box-shadow: rgba(59, 130, 246, 0.3) 30px 50px 25px -40px, rgba(59, 130, 246, 0.1) 0px 25px 30px 0px;
+        }
+
+        .parent:hover .card .bottom .social-buttons-container .social-button {
+          transform: translate3d(0, 0, 50px);
+          box-shadow: rgba(59, 130, 246, 0.2) -5px 20px 10px 0px;
+        }
+
+        .parent:hover .card .logo .circle2 {
+          transform: translate3d(0, 0, 60px);
+        }
+
+        .parent:hover .card .logo .circle3 {
+          transform: translate3d(0, 0, 80px);
+        }
+
+        .parent:hover .card .logo .circle4 {
+          transform: translate3d(0, 0, 100px);
+        }
+
+        .parent:hover .card .logo .circle5 {
+          transform: translate3d(0, 0, 120px);
         }
       `}</style>
     </motion.div>
