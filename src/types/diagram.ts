@@ -1,3 +1,13 @@
+// New type for logical paired wires (e.g., power+/power-, signal+/signal-, canH/canL)
+export interface WirePair {
+  id: string;
+  from: TerminalRef;
+  to: TerminalRef;
+  types: [TerminalType, TerminalType]; // e.g., ["power+", "power-"]
+  gauge: Gauge;
+  netId?: string;
+  controlPoints?: { x: number; y: number }[]; // shared centerline
+}
 export type TerminalType =
   | "power+"
   | "power-"

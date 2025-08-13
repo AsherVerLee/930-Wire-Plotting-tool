@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { DiagramCanvas } from "@/features/diagram/components/DiagramCanvas";
+// import { DiagramCanvas } from "@/features/diagram/components/DiagramCanvas";
+import { SimpleDiagramCanvas } from "@/components/SimpleDiagramCanvas";
 import { Toolbar } from "@/features/diagram/components/Toolbar";
 import { Palette } from "@/features/diagram/components/Palette";
 import { PropertiesPanel } from "@/features/diagram/components/PropertiesPanel";
@@ -35,7 +36,7 @@ const Index = () => {
         {/* Canvas Area */}
         <div className="flex flex-1 overflow-hidden">
           <div className="flex-1">
-            <DiagramCanvas paletteVisible={paletteVisible} />
+            <SimpleDiagramCanvas paletteVisible={paletteVisible} />
           </div>
           
           {/* Right Sidebar - Properties */}

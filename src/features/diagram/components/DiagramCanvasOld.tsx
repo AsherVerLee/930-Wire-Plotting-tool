@@ -1,12 +1,15 @@
 import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { useDrop, useDrag } from "react-dnd";
 import { useDiagramStore } from "@/state/diagramStore";
+import { useWireModeActions } from "@/state/wireModeStore";
 import partsJson from "../parts/library930.json";
 import { loadCustomParts } from "../parts/customParts";
 import type { PartDefinition, Terminal } from "@/types/diagram";
 import { terminalColors } from "@/types/diagram";
-import { strokeWidthForGauge, offsetForPair, manhattanPath } from "@/utils/routing";
+import { strokeWidthForGauge, offsetForPair, pathToSVG } from "@/utils/routing";
 import { canConnect } from "@/utils/validation";
+import { TerminalComponent, WireModeIndicator } from "./TerminalComponent";
+import { WireModeToolbar } from "./WireModeToolbar";
 import { toast } from "sonner";
 
 const GRID = 16;
@@ -46,11 +49,34 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
   const ref = useRef<SVGSVGElement | null>(null);
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState<{ x: number; y: number } | null>(null);
-  const { components, wires, wirePairs, zoom, panX, panY, setZoom, setPan, addComponent, setPartsLibrary, select, startConnection, completeConnection, connectingFrom, partsLibrary, moveComponent, setWireControlPoints, removeComponent, addConnectingPoint, clearConnectingPath, connectingPoints, cancelConnection, popConnectingPoint } = useDiagramStore();
-  const { labels, addWireLabel } = useDiagramStore((s) => ({ labels: (s as any).labels, addWireLabel: (s as any).addWireLabel }));
+  
+  // Store hooks
+  const { 
+    components, 
+    wires, 
+    wirePairs, 
+    zoom, 
+    panX, 
+    panY, 
+    setZoom, 
+    setPan, 
+    addComponent, 
+    setPartsLibrary, 
+    select, 
+    partsLibrary, 
+    moveComponent, 
+    removeComponent,
+    createAutomaticConnection,
+    autoRouteAllWires
+  } = useDiagramStore();
+  
+  const { labels, addWireLabel } = useDiagramStore((s) => ({ 
+    labels: (s as any).labels, 
+    addWireLabel: (s as any).addWireLabel 
+  }));
 
-  // Live preview mouse for interactive routing
-  const [previewMouse, setPreviewMouse] = useState<{ x:number; y:number } | null>(null);
+  // Wire mode hooks
+  const wireModeActions = useWireModeActions();
 
   // Debug: log partsLibrary and components on every render
   useEffect(() => {
@@ -145,58 +171,15 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
     return { x: comp.x + term.x, y: comp.y + term.y };
   };
 
-  const onTerminalClick = (componentId: string, terminalId: string) => {
-    if (!connectingFrom) {
-      startConnection({ componentId, terminalId });
-      setPreviewMouse(null);
-    } else {
-      if (connectingFrom.componentId === componentId && connectingFrom.terminalId === terminalId) {
-        return;
-      }
-      const aPart = partsLibrary[components.find(c => c.id === connectingFrom.componentId)!.partKey];
-      const bPart = partsLibrary[components.find(c => c.id === componentId)!.partKey];
-      const aTerm = aPart.terminals.find(t => t.id === connectingFrom.terminalId)!;
-      const bTerm = bPart.terminals.find(t => t.id === terminalId)!;
-      if (!canConnect(aTerm.type, bTerm.type)) {
-        toast.warning("Terminal types do not match. Connection blocked.");
-        return;
-      }
-
-      // Nudge behavior: if the destination terminal is only a tiny offset away from a clean 0/45/90 from the last waypoint, move the part slightly instead of making a micro wire jog.
-      try {
-        const startComp = components.find(c => c.id === connectingFrom.componentId);
-        const destComp = components.find(c => c.id === componentId);
-        if (startComp && destComp) {
-          const start = { x: startComp.x + aTerm.x, y: startComp.y + aTerm.y };
-          const last = connectingPoints.length ? connectingPoints[connectingPoints.length - 1] : start;
-          const dest = { x: destComp.x + bTerm.x, y: destComp.y + bTerm.y };
-          const snapped = snapToEightFrom(last, dest);
-          const dx = snapped.x - dest.x;
-          const dy = snapped.y - dest.y;
-          const NUDGE_MAX = GRID * 1.0; // allow up to one grid nudge to keep clean geometry
-          const needsNudge = Math.hypot(dx, dy) > 0 && Math.abs(dx) <= NUDGE_MAX && Math.abs(dy) <= NUDGE_MAX;
-          if (needsNudge) {
-            // Move destination component so its terminal lands on the snapped point, while keeping component position snapped to grid.
-            const targetCompX = snap(snapped.x - bTerm.x);
-            const targetCompY = snap(snapped.y - bTerm.y);
-            moveComponent(destComp.id, targetCompX, targetCompY);
-          }
-        }
-      } catch (e) {
-        console.warn("Nudge failed, proceeding without moving part:", e);
-      }
-
-      completeConnection({ componentId, terminalId });
-      setPreviewMouse(null);
-    }
+  // Handle automatic wire connections
+  const handleConnectionComplete = (from: any, to: any) => {
+    createAutomaticConnection(from, to);
+    toast.success("Wire connected automatically!");
   };
 
-  // Basic component dragging with relative offset
+  // Component dragging with automatic wire rerouting
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
-  
-  // Wire segment dragging (disabled)
-  const [draggedSegment, setDraggedSegment] = useState<{ wireId: string; segIdx: number; startPos: { x: number; y: number }; pts?: { x: number; y: number }[] } | null>(null);
 
   // Component dragging with better offset handling
   const onPartMouseDown = (id: string, e: React.MouseEvent) => {

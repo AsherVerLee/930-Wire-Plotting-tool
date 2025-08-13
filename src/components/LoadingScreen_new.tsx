@@ -24,7 +24,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
     setIsExiting(true);
     setTimeout(() => {
       onComplete();
-    }, 1200); // Increased to match the fade duration
+    }, 300); // Reduced duration for faster transition
   };
 
   useEffect(() => {
@@ -45,7 +45,16 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
       });
     }, 30);
 
-    return () => clearInterval(timer);
+    // Safety timeout to ensure we don't get stuck on loading screen
+    const safetyTimer = setTimeout(() => {
+      setIsLoadingComplete(true);
+      setProgress(100);
+    }, 5000);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(safetyTimer);
+    };
   }, [steps.length]);
 
   // Particle system setup
@@ -299,7 +308,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
       initial={{ opacity: 0 }}
       animate={isExiting ? { opacity: 0 } : { opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: isExiting ? 1.2 : 0.5, ease: "easeInOut" }}
+      transition={{ duration: isExiting ? 0.3 : 0.5, ease: "easeInOut" }}
       className="fixed inset-0 bg-black flex items-center justify-center z-50"
       style={{ perspective: '1000px' }}
       onMouseMove={handleMouseMove}
@@ -308,7 +317,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={isExiting ? { opacity: 0, scale: 0.8 } : { opacity: 1, scale: 1 }}
-        transition={{ duration: isExiting ? 1.2 : 2, ease: "easeOut" }}
+        transition={{ duration: isExiting ? 0.3 : 2, ease: "easeOut" }}
         className="absolute inset-0 z-0"
       >
         <ModernGradientBackground />
@@ -319,7 +328,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
         className="parent"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={isExiting ? { scale: 0.7, opacity: 0, y: 50 } : { scale: 1, opacity: 1, y: 0 }}
-        transition={{ duration: isExiting ? 1.2 : 0.8, ease: "easeOut" }}
+        transition={{ duration: isExiting ? 0.3 : 0.8, ease: "easeOut" }}
       >
         <div className="card">
           <div className="logo">
