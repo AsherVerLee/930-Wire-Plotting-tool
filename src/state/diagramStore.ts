@@ -12,7 +12,6 @@ import type {
 } from "@/types/diagram";
 import { canConnect } from "@/utils/validation";
 import { kiCadRoute } from "@/utils/routing";
-import type { WirePair } from "@/types/diagram";
 
 interface SettingsState {
   gridSize: number;

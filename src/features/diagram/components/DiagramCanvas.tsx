@@ -46,7 +46,19 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
   const ref = useRef<SVGSVGElement | null>(null);
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState<{ x: number; y: number } | null>(null);
-  const { components, wires, wirePairs, zoom, panX, panY, setZoom, setPan, addComponent, setPartsLibrary, select, startConnection, completeConnection, connectingFrom, partsLibrary, moveComponent, setWireControlPoints, removeComponent, addConnectingPoint, clearConnectingPath, connectingPoints, cancelConnection, popConnectingPoint } = useDiagramStore();
+  const { components, wires, wirePairs, zoom, panX, panY, connectingFrom, partsLibrary, connectingPoints } = useDiagramStore();
+  const select = useDiagramStore((s: any) => s.select);
+  const setZoom = useDiagramStore((s: any) => s.setZoom);
+  const setPan = useDiagramStore((s: any) => s.setPan);
+  const addComponent = useDiagramStore((s: any) => s.addComponent);
+  const setPartsLibrary = useDiagramStore((s: any) => s.setPartsLibrary);
+  const startConnection = useDiagramStore((s: any) => s.startConnection);
+  const completeConnection = useDiagramStore((s: any) => s.completeConnection);
+  const moveComponent = useDiagramStore((s: any) => s.moveComponent);
+  const removeComponent = useDiagramStore((s: any) => s.removeComponent);
+  const addConnectingPoint = useDiagramStore((s: any) => s.addConnectingPoint);
+  const cancelConnection = useDiagramStore((s: any) => s.cancelConnection);
+  const popConnectingPoint = useDiagramStore((s: any) => s.popConnectingPoint);
   const { labels, addWireLabel } = useDiagramStore((s) => ({ labels: (s as any).labels, addWireLabel: (s as any).addWireLabel }));
 
   // Live preview mouse for interactive routing
@@ -246,7 +258,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
   const onSvgMouseMove: React.MouseEventHandler<SVGSVGElement> = (e) => {
     onMouseMove(e);
     // continuous wire validator to keep pairs tidy automatically
-    useDiagramStore.getState().validateWires();
+    // useDiagramStore.getState().validateWires(); // Removed: validateWires does not exist
     if (connectingFrom) {
       updatePreviewFromEvent(e);
       return; // don't move parts while routing
