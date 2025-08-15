@@ -12,6 +12,9 @@ import type {
 } from "@/types/diagram";
 import { canConnect } from "@/utils/validation";
 import { kiCadRoute } from "@/utils/routing";
+// Make sure the path "@/utils/routing" is correct relative to this file.
+// If not, adjust it, for example:
+// import { kiCadRoute } from "../utils/routing";
 
 interface SettingsState {
   gridSize: number;
@@ -306,6 +309,7 @@ export const useDiagramStore = create<DiagramStoreState>((set, get) => ({
   partsLibrary: {},
   components: [],
   wires: [],
+  wirePairs: [],
   labels: [],
   selected: null,
   zoom: 1,

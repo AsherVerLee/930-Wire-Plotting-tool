@@ -15,13 +15,13 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
-    show: false, // Don't show until ready
+    show: false, // This paises the window until ready-to-show event
     icon: path.join(__dirname, "../assets/icon.png"), // Add app icon
     titleBarStyle: 'default',
     title: '930 CircuitPilot',
   });
 
-  // Show window when ready to prevent white flash
+  // Show window when ready to prevent the white transiotion blo
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show();
     mainWindow?.focus();
