@@ -48,11 +48,19 @@ export interface WireSegmentPair {
   type: TerminalType; // determines color coding
   gauge: Gauge;
   netId?: string; // for bus-style chains (e.g., CAN)
+  controlPoints?: { x: number; y: number }[]; // user-manipulated control nodes
+}
+
+export interface WireLabel {
+  id: string;
+  wireId: string;
+  text: string;
 }
 
 export interface DiagramStateDto {
   components: PlacedComponent[];
   wires: WireSegmentPair[];
+  labels?: WireLabel[];
 }
 
 export const terminalColors: Record<TerminalType, string> = {
@@ -63,5 +71,5 @@ export const terminalColors: Record<TerminalType, string> = {
   "signal+": "hsl(20 90% 50%)", // orange
   "signal-": "hsl(210 10% 23%)", // brownish/dark
   ethernet: "hsl(204 100% 40%)", // blue
-  usb: "hsl(204 100% 40%)", // blue
+  usb: "hsl(330 100% 50%)", // pink
 };
