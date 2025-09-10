@@ -275,7 +275,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
 
   const onSvgClick: React.MouseEventHandler<SVGSVGElement> = (e) => {
     if (!connectingFrom) return;
-    // Allow clicking anywhere (not just background) to add a waypoint while routing
+    // Allow clicking anywhere (not limited to background) to add a waypoint while routing
     updatePreviewFromEvent(e);
     if (!previewMouse) return;
     addConnectingPoint({ x: previewMouse.x, y: previewMouse.y });
@@ -332,7 +332,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
     return d;
   }, [connectingFrom, components, partsLibrary, connectingPoints, previewMouse]);
 
-  // helpers for pair rendering
+  // my neat helpers for pair rendering
   const isCanonicalType = (t: Terminal["type"]) => t === "power+" || t === "signal+" || t === "canH";
   const complementType = (t: Terminal["type"]) => {
     switch (t) {
@@ -517,7 +517,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
                 t === "power+" || t === "power-" || t === "signal+" || t === "signal-" || t === "canH" || t === "canL"
               );
 
-              // Composite/partner flags computed once here
+              // Composite/partner flags computed one time here
               const compT = complementType(w.type);
               const hasPartner = !!compT && wires.some(v => v.type === compT && (
                 ((v.from.componentId === w.from.componentId && v.to.componentId === w.to.componentId) ||
@@ -614,7 +614,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
           >
             ⟲ Undo point
           </button>
-        </div> //apple -AA ron
+        </div> //apple -AA ron (asher didnt see this)n
       )}
     </div>
   );

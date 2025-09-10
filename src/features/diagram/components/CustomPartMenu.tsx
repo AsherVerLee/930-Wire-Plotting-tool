@@ -105,7 +105,21 @@ export function CustomPartMenu({ onClose }: { onClose: () => void }) {
             <input type="range" min={0.5} max={2} step={0.1} value={previewScale} onChange={(e) => setPreviewScale(Number(e.target.value))} />
           </div>
           <div className="rounded-md border border-border bg-background/60 p-4">
-            <svg ref={svgRef} width={width*previewScale+40} height={height*previewScale+40} onMouseMove={onSvgMouseMove} onMouseUp={onSvgMouseUp} onMouseLeave={onSvgMouseLeave}>
+            <svg
+              ref={svgRef}
+              width={width*previewScale+40}
+              height={height*previewScale+40}
+              onMouseMove={onSvgMouseMove}
+              onMouseUp={onSvgMouseUp}
+              onMouseLeave={onSvgMouseLeave}
+            >
+              <defs>
+                <pattern id="part-grid" width={GRID*previewScale} height={GRID*previewScale} patternUnits="userSpaceOnUse" patternTransform={`translate(${20 % (GRID*previewScale)},${20 % (GRID*previewScale)})`}>
+                  <rect x="0" y="0" width={GRID*previewScale} height={GRID*previewScale} fill="none" />
+                  <path d={`M ${GRID*previewScale} 0 L 0 0 0 ${GRID*previewScale}`} stroke="hsl(var(--border))" strokeWidth={0.5} />
+                </pattern>
+              </defs>
+              <rect x={0} y={0} width={width*previewScale+40} height={height*previewScale+40} fill="url(#part-grid)" />
               <g transform={`translate(20,20) scale(${previewScale})`}>
                 <rect x={0} y={0} width={width} height={height} rx={10} fill="hsl(var(--card))" stroke="hsl(var(--border))" />
                 {/* resize handle */}
