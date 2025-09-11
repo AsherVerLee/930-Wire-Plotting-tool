@@ -81,7 +81,7 @@ npm run build
 npm run make
 ```
 
-## 🛠️ Development
+## Development
 
 ### Tech Stack
 
@@ -115,7 +115,7 @@ src/
 - **PropertiesPanel**: Component and wire property editor
 - **SettingsPanel**: Application preferences and routing configuration
 
-## 📚 Usage Guide
+##  Usage Guide
 
 ### Basic Workflow
 
@@ -141,7 +141,7 @@ src/
 - `Delete`: Remove selected components/wires
 - `R`: Rotate selected component
 
-## 🤝 Contributing
+##  Contributing
 
 We welcome contributions from the FRC community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
@@ -161,17 +161,17 @@ We welcome contributions from the FRC community! Please see our [Contributing Gu
 - Write tests for new features
 - Update documentation as needed
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **Team 930**: The Mukwonago Bears robotics team
 - **FRC Community**: For inspiration and feedback
 - **Open Source Libraries**: React, Electron, and the amazing ecosystem
 
-## 📞 Support
+##  Support
 
 - **Issues**: [GitHub Issues](https://github.com/AsherVerLee/930-Wire-Plotting-tool/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/AsherVerLee/930-Wire-Plotting-tool/discussions)
