@@ -10,31 +10,31 @@ CircuitPilot is a powerful desktop application built specifically for creating, 
 
 ## ✨ Features
 
-### 🎯 **Smart Circuit Design**
+###  **Smart Circuit Design**
 - **Component Library**: Pre-loaded with common robotics components (motors, sensors, controllers)
 - **Drag & Drop Interface**: Intuitive component placement with grid snapping
 - **Intelligent Wire Routing**: Automatic pathfinding with obstacle avoidance using KiCad-style algorithms
 - **Wire Pairing**: Support for paired wires (power+/-, CAN H/L, signal differential pairs)
 
-### 🔧 **Professional Tools**
+###  **Professional Tools**
 - **Multiple Wire Types**: Power, signal, CAN bus, Ethernet, USB with color coding
 - **Wire Gauges**: Support for standard AWG wire sizes (10-22 gauge)
 - **Custom Control Points**: Manual wire routing with user-defined waypoints
 - **Component Rotation**: 90-degree rotation support for optimal layout
 
-### 💾 **File Management**
+###  **File Management**
 - **Project Export**: Save/load project files with full diagram state
 - **PDF Export**: Generate professional documentation
 - **PNG Export**: High-quality images for presentations
 - **Auto-validation**: Real-time error checking and wire cleanup
 
-### 🎨 **Modern UI/UX**
+###  **Modern UI/UX**
 - **Dark/Light Themes**: Customizable appearance
 - **Responsive Design**: Works on various screen sizes
 - **Keyboard Shortcuts**: Efficient workflow navigation
 - **Real-time Preview**: See changes instantly as you work
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
