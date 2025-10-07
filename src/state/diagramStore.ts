@@ -12,9 +12,6 @@ import type {
 } from "@/types/diagram";
 import { canConnect } from "@/utils/validation";
 import { kiCadRoute } from "@/utils/routing";
-// Make sure the path "@/utils/routing" is correct relative to this file.
-// If not, adjust it, for example:
-// import { kiCadRoute } from "../utils/routing";
 
 interface SettingsState {
   gridSize: number;
@@ -48,15 +45,12 @@ interface SettingsState {
   };
 }
 
-import type { WirePair } from "@/types/diagram";
-
 interface DiagramStoreState {
   partsLibrary: Record<string, PartDefinition>;
   components: PlacedComponent[];
-  wires: WireSegmentPair[]; // legacy, for single wires (ethernet, usb)
-  wirePairs: WirePair[]; // new: for paired wires (power, signal, CAN)
+  wires: WireSegmentPair[];
   labels: WireLabel[];
-  selected: { type: "component" | "wire" | "wirePair"; id: string } | null;
+  selected: { type: "component" | "wire"; id: string } | null;
   // viewport
   zoom: number;
   panX: number;
@@ -70,12 +64,45 @@ interface DiagramStoreState {
   // preferences/settings
   settings: SettingsState;
 
-
+  // actions
+  setPartsLibrary: (parts: PartDefinition[]) => void;
+  addPartDefinition: (part: PartDefinition) => void;
+  addComponent: (partKey: string, x: number, y: number) => void;
+  moveComponent: (id: string, x: number, y: number) => void;
+  rotateComponent: (id: string, rotation: 0 | 90 | 180 | 270) => void;
+  renameComponent: (id: string, name: string) => void;
+  select: (sel: DiagramStoreState["selected"]) => void;
+  setZoom: (zoom: number) => void;
+  setPan: (x: number, y: number) => void;
+  startConnection: (ref: TerminalRef) => void;
+  addConnectingPoint: (pt: { x: number; y: number }) => void;
+  popConnectingPoint: () => void;
+  clearConnectingPath: () => void;
+  completeConnection: (ref: TerminalRef, options?: { gauge?: Gauge; netId?: string }) => void;
+  cancelConnection: () => void;
+  setWireGauge: (id: string, gauge: Gauge) => void;
+  setWireControlPoints: (id: string, updater: (prev?: {x:number,y:number}[]) => {x:number,y:number}[]) => void;
+  // labels
+  addWireLabel: (wireId: string, text?: string) => void;
+  updateWireLabel: (labelId: string, text: string) => void;
+  removeWireLabel: (labelId: string) => void;
+  // selection removal
+  removeSelected: () => void;
+  removeComponent: (id: string) => void;
+  // persistence and history
+  saveDto: () => DiagramStateDto;
+  loadDto: (dto: DiagramStateDto) => void;
+  undo: () => void;
+  redo: () => void;
+  // maintenance actions
+  snapAllToGrid: () => void;
+  cleanWires: () => void;
+  repairPairSpacing: () => void;
+  validateWires: () => void;
   // settings update
   setSettings: (partial: Partial<SettingsState>) => void;
   setAutoCleanEnabled: (enabled: boolean) => void;
 }
-
 
 function snapshot(state: DiagramStoreState): DiagramStateDto {
   return {
@@ -309,7 +336,6 @@ export const useDiagramStore = create<DiagramStoreState>((set, get) => ({
   partsLibrary: {},
   components: [],
   wires: [],
-  wirePairs: [],
   labels: [],
   selected: null,
   zoom: 1,
@@ -484,68 +510,60 @@ export const useDiagramStore = create<DiagramStoreState>((set, get) => ({
       const next = snapshot(state);
       const comps = state.components;
       const lib = state.partsLibrary;
-      // Determine if this is a paired type
-      const pairedTypes: Record<string, [TerminalType, TerminalType]> = {
-        "power+": ["power+", "power-"],
-        "power-": ["power+", "power-"],
-        "signal+": ["signal+", "signal-"],
-        "signal-": ["signal+", "signal-"],
-        "canH": ["canH", "canL"],
-        "canL": ["canH", "canL"],
+      const tempWire: WireSegmentPair = {
+        id: "temp",
+        from,
+        to: ref,
+        type: a,
+        gauge: options?.gauge ?? 18,
+        netId: options?.netId,
+        controlPoints: state.connectingPoints.map((p) => ({ x: snapTo(p.x, grid), y: snapTo(p.y, grid) })),
       };
-      if (pairedTypes[a]) {
-        // Create a WirePair
-        const pairId = nanoid();
-        const controlPoints = state.connectingPoints.map((p) => ({ x: snapTo(p.x, grid), y: snapTo(p.y, grid) }));
-        const wirePair = {
-          id: pairId,
-          from,
-          to: ref,
-          types: pairedTypes[a],
-          gauge: options?.gauge ?? 18,
-          netId: options?.netId,
-          controlPoints,
-        };
-        return {
-          ...state,
-          wirePairs: [...(state.wirePairs || []), wirePair],
-          connectingFrom: null,
-          connectingPoints: [],
-          past: [...state.past, next],
-          future: [],
-          selected: { type: "wirePair", id: pairId },
-        };
-      } else {
-        // Single wire (ethernet, usb, etc)
-        const tempWire: WireSegmentPair = {
-          id: "temp",
-          from,
-          to: ref,
-          type: a,
-          gauge: options?.gauge ?? 18,
-          netId: options?.netId,
-          controlPoints: state.connectingPoints.map((p) => ({ x: snapTo(p.x, grid), y: snapTo(p.y, grid) })),
-        };
-        const cleaned = cleanWireUsingShape(tempWire, comps, lib, grid);
-        const wire: WireSegmentPair = {
-          id: nanoid(),
-          from,
-          to: ref,
-          type: a,
-          gauge: options?.gauge ?? 18,
-          netId: options?.netId,
-          controlPoints: cleaned.controlPoints,
-        };
-        return {
-          ...state,
-          wires: syncPairedWires([...state.wires, wire]),
-          connectingFrom: null,
-          connectingPoints: [],
-          past: [...state.past, next],
-          future: [],
-          selected: { type: "wire", id: wire.id },
-        };
+      const cleaned = cleanWireUsingShape(tempWire, comps, lib, grid);
+      const wire: WireSegmentPair = {
+        id: nanoid(),
+        from,
+        to: ref,
+        type: a,
+        gauge: options?.gauge ?? 18,
+        netId: options?.netId,
+        controlPoints: cleaned.controlPoints,
+      };
+
+      // Attempt to auto-create partner for paired types (power, CAN, signal)
+      const created: WireSegmentPair[] = [wire];
+      const compType = complementType(a as TerminalType);
+      if (compType) {
+        const fromComp = state.components.find(c => c.id === from.componentId);
+        const toComp = state.components.find(c => c.id === ref.componentId);
+        const fromPart = fromComp ? state.partsLibrary[fromComp.partKey] : undefined;
+        const toPart = toComp ? state.partsLibrary[toComp.partKey] : undefined;
+        const fromTermComp = fromPart?.terminals.find(t => t.type === compType);
+        const toTermComp = toPart?.terminals.find(t => t.type === compType);
+        if (fromTermComp && toTermComp) {
+          const partnerTemp: WireSegmentPair = {
+            id: "temp2",
+            from: { componentId: from.componentId, terminalId: fromTermComp.id },
+            to: { componentId: ref.componentId, terminalId: toTermComp.id },
+            type: compType,
+            gauge: options?.gauge ?? 18,
+            netId: options?.netId,
+            controlPoints: cleaned.controlPoints ? cleaned.controlPoints.map(p => ({ ...p })) : undefined,
+          };
+          const partnerClean = cleanWireUsingShape(partnerTemp, comps, lib, grid);
+          created.push({ ...partnerClean, id: nanoid() });
+        }
       }
+
+      return {
+        ...state,
+        wires: syncPairedWires([...state.wires, ...created]),
+        connectingFrom: null,
+        connectingPoints: [],
+        past: [...state.past, next],
+        future: [],
+        selected: { type: "wire", id: wire.id },
+      };
     }),
 
   cancelConnection: () => set(() => ({ connectingFrom: null, connectingPoints: [] })),

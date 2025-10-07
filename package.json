@@ -1,9 +1,8 @@
 {
-  "name": "930-circuitpilot",
+  "name": "vite_react_shadcn_ts",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "dist/electron/main.cjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,9 +11,7 @@
     "preview": "vite preview",
     "electron:compile": "cd electron && tsc && cd .. && mv dist/electron/main.js dist/electron/main.cjs && mv dist/electron/preload.js dist/electron/preload.cjs",
     "electron:dev": "npm run electron:compile && VITE_DEV_SERVER_URL=http://localhost:8080 npx electron dist/electron/main.cjs",
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "start": "npm run dev & sleep 3 && npm run electron:dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -53,9 +50,8 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^3.6.0",
-    "electron-squirrel-startup": "^1.0.1",
+    "electron": "^30.5.1",
     "embla-carousel-react": "^8.6.0",
-    "framer-motion": "^12.23.12",
     "html-to-image": "^1.11.13",
     "identity-obj-proxy": "^3.0.0",
     "input-otp": "^1.4.2",
@@ -81,14 +77,6 @@
     "zustand": "^4.5.7"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.8.3",
-    "@electron-forge/maker-deb": "^7.8.3",
-    "@electron-forge/maker-rpm": "^7.8.3",
-    "@electron-forge/maker-squirrel": "^7.8.3",
-    "@electron-forge/maker-zip": "^7.8.3",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.8.3",
-    "@electron-forge/plugin-fuses": "^7.8.3",
-    "@electron/fuses": "^1.8.0",
     "@eslint/js": "^9.32.0",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.16.5",
@@ -96,7 +84,6 @@
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react-swc": "^3.11.0",
     "autoprefixer": "^10.4.21",
-    "electron": "^30.5.1",
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",

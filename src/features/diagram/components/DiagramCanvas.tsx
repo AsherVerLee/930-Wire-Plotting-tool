@@ -5,7 +5,7 @@ import partsJson from "../parts/library930.json";
 import { loadCustomParts } from "../parts/customParts";
 import type { PartDefinition, Terminal } from "@/types/diagram";
 import { terminalColors } from "@/types/diagram";
-import { strokeWidthForGauge, offsetForPair, manhattanPath } from "@/utils/routing";
+import { strokeWidthForGauge, offsetForPair, kiCadRoute } from "@/utils/routing";
 import { canConnect } from "@/utils/validation";
 import { toast } from "sonner";
 
@@ -46,20 +46,9 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
   const ref = useRef<SVGSVGElement | null>(null);
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState<{ x: number; y: number } | null>(null);
-  const { components, wires, wirePairs, zoom, panX, panY, connectingFrom, partsLibrary, connectingPoints } = useDiagramStore();
-  const select = useDiagramStore((s: any) => s.select);
-  const setZoom = useDiagramStore((s: any) => s.setZoom);
-  const setPan = useDiagramStore((s: any) => s.setPan);
-  const addComponent = useDiagramStore((s: any) => s.addComponent);
-  const setPartsLibrary = useDiagramStore((s: any) => s.setPartsLibrary);
-  const startConnection = useDiagramStore((s: any) => s.startConnection);
-  const completeConnection = useDiagramStore((s: any) => s.completeConnection);
-  const moveComponent = useDiagramStore((s: any) => s.moveComponent);
-  const removeComponent = useDiagramStore((s: any) => s.removeComponent);
-  const addConnectingPoint = useDiagramStore((s: any) => s.addConnectingPoint);
-  const cancelConnection = useDiagramStore((s: any) => s.cancelConnection);
-  const popConnectingPoint = useDiagramStore((s: any) => s.popConnectingPoint);
+  const { components, wires, zoom, panX, panY, setZoom, setPan, addComponent, setPartsLibrary, select, startConnection, completeConnection, connectingFrom, partsLibrary, moveComponent, setWireControlPoints, removeComponent, addConnectingPoint, clearConnectingPath, connectingPoints, cancelConnection, popConnectingPoint } = useDiagramStore();
   const { labels, addWireLabel } = useDiagramStore((s) => ({ labels: (s as any).labels, addWireLabel: (s as any).addWireLabel }));
+  const settings = useDiagramStore((s) => (s as any).settings);
 
   // Live preview mouse for interactive routing
   const [previewMouse, setPreviewMouse] = useState<{ x:number; y:number } | null>(null);
@@ -258,7 +247,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
   const onSvgMouseMove: React.MouseEventHandler<SVGSVGElement> = (e) => {
     onMouseMove(e);
     // continuous wire validator to keep pairs tidy automatically
-    // useDiagramStore.getState().validateWires(); // Removed: validateWires does not exist
+    useDiagramStore.getState().validateWires();
     if (connectingFrom) {
       updatePreviewFromEvent(e);
       return; // don't move parts while routing
@@ -286,7 +275,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
 
   const onSvgClick: React.MouseEventHandler<SVGSVGElement> = (e) => {
     if (!connectingFrom) return;
-    // Allow clicking anywhere (not just background) to add a waypoint while routing
+    // Allow clicking anywhere (not limited to background) to add a waypoint while routing
     updatePreviewFromEvent(e);
     if (!previewMouse) return;
     addConnectingPoint({ x: previewMouse.x, y: previewMouse.y });
@@ -343,7 +332,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
     return d;
   }, [connectingFrom, components, partsLibrary, connectingPoints, previewMouse]);
 
-  // helpers for pair rendering
+  // my neat helpers for pair rendering
   const isCanonicalType = (t: Terminal["type"]) => t === "power+" || t === "signal+" || t === "canH";
   const complementType = (t: Terminal["type"]) => {
     switch (t) {
@@ -383,61 +372,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
           {/* grid aligned with world (snapping) */}
           <rect width="100%" height="100%" fill="url(#grid)" />
 
-          {/* paired wires */}
-          {wirePairs.map((pair) => {
-            // Render both wires in the pair, offset from the centerline
-            const aComp = components.find((c) => c.id === pair.from.componentId);
-            const bComp = components.find((c) => c.id === pair.to.componentId);
-            if (!aComp || !bComp) return null;
-            const aTerm = (partsLibrary[aComp.partKey]?.terminals || []).find((t) => t.id === pair.from.terminalId);
-            const bTerm = (partsLibrary[bComp.partKey]?.terminals || []).find((t) => t.id === pair.to.terminalId);
-            if (!aTerm || !bTerm) return null;
-            const a = getTerminalAbs(aComp.id, aTerm);
-            const b = getTerminalAbs(bComp.id, bTerm);
-
-            // Use centerline path from controlPoints, or straight line if none
-            const pts = [a, ...(pair.controlPoints ?? []), b];
-            let d = `M ${pts[0].x},${pts[0].y}`;
-            for (let i = 1; i < pts.length; i++) {
-              d += ` L ${pts[i].x},${pts[i].y}`;
-            }
-
-            // Offset both wires from centerline
-            const offset = 8; // px, can be made grid-aligned
-            function offsetPath(path, offsetDir) {
-              // Simple offset: for each segment, offset perpendicular by offsetDir*offset
-              const segs = pts.map(p => ({ ...p }));
-              const out = [];
-              for (let i = 1; i < segs.length; i++) {
-                const a = segs[i - 1], b = segs[i];
-                let dx = b.x - a.x, dy = b.y - a.y;
-                const len = Math.hypot(dx, dy) || 1;
-                // Perpendicular direction
-                const px = -dy / len * offset * offsetDir;
-                const py = dx / len * offset * offsetDir;
-                if (i === 1) out.push({ x: a.x + px, y: a.y + py });
-                out.push({ x: b.x + px, y: b.y + py });
-              }
-              let d2 = `M ${out[0].x},${out[0].y}`;
-              for (let i = 1; i < out.length; i++) d2 += ` L ${out[i].x},${out[i].y}`;
-              return d2;
-            }
-
-            // Colors for each type
-            const colorA = terminalColors[pair.types[0]];
-            const colorB = terminalColors[pair.types[1]];
-            const width = 4;
-
-            return (
-              <g key={pair.id}>
-                <path d={offsetPath(d, -1)} fill="none" stroke={colorA} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" />
-                <path d={offsetPath(d, 1)} fill="none" stroke={colorB} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" />
-                {/* Wide transparent hit area for selection */}
-                <path d={d} fill="none" stroke="transparent" strokeWidth={width + 12} pointerEvents="stroke" style={{ cursor: "pointer" }} />
-              </g>
-            );
-          })}
-          {/* single wires (ethernet, usb) */}
+          {/* wires */}
           {wires.map((w) => {
             try {
               const aComp = components.find((c) => c.id === w.from.componentId);
@@ -448,60 +383,70 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
               if (!aTerm || !bTerm) return null;
               const a = getTerminalAbs(aComp.id, aTerm);
               const b = getTerminalAbs(bComp.id, bTerm);
-
-              // --- Paired wire logic ---
-              const isPairedType = (t) => (
-                t === "power+" || t === "power-" || t === "signal+" || t === "signal-" || t === "canH" || t === "canL"
-              );
-              const isCanonicalType = (t) => t === "power+" || t === "signal+" || t === "canH";
-              const complementType = (t) => {
-                switch (t) {
-                  case "power+": return "power-";
-                  case "power-": return "power+";
-                  case "signal+": return "signal-";
-                  case "signal-": return "signal+";
-                  case "canH": return "canL";
-                  case "canL": return "canH";
-                  default: return undefined;
-                }
-              };
-              // Pair key logic (matches diagramStore)
-              const pairGroup = (t) => {
-                if (t.startsWith("power")) return "power";
-                if (t.startsWith("signal")) return "signal";
-                if (t.startsWith("can")) return "can";
-                return undefined;
-              };
-              const pairKey = (w) => {
-                const g = pairGroup(w.type);
-                if (!g) return undefined;
-                const a = w.from.componentId < w.to.componentId ? w.from.componentId : w.to.componentId;
-                const b = w.from.componentId < w.to.componentId ? w.to.componentId : w.from.componentId;
-                const net = w.netId ?? "";
-                return `${g}|${a}|${b}|${net}`;
-              };
-              const canonical = isCanonicalType(w.type);
-              const thisPairKey = pairKey(w);
-              const partnerType = complementType(w.type);
-              const hasPartner = !!(isPairedType(w.type) && wires.some(
-                (other) =>
-                  other.id !== w.id &&
-                  pairKey(other) === thisPairKey &&
-                  other.type === partnerType
-              ));
-
+              
               const obstacles = components.map(c => {
                 const def = partsLibrary[c.partKey];
                 return { x: c.x, y: c.y, width: def?.width ?? 0, height: def?.height ?? 0 };
               });
 
+              // Helper: link using 0/45/90 only between two points, returning intermediate points (excluding start, including end)
+              function linkOrth45(p: {x:number;y:number}, q: {x:number;y:number}): {x:number;y:number}[] {
+                const dx = q.x - p.x;
+                const dy = q.y - p.y;
+                if (dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy)) {
+                  return [q];
+                }
+                // Default to horizontal then vertical
+                return [{ x: q.x, y: p.y }, q];
+              }
+              
               let base;
-              try {
-                // Always use manhattanPath for strict cardinal routing
-                base = manhattanPath(a, b, 0, obstacles);
-              } catch (e) {
-                console.error("Routing error, falling back to straight line:", e);
-                base = `M ${a.x},${a.y} L ${b.x},${b.y}`;
+              if (w.controlPoints && w.controlPoints.length > 0) {
+                const pts = [a, ...w.controlPoints];
+                // Enforce final leg to terminal to be 0/45/90
+                const tail = linkOrth45(pts[pts.length - 1], b);
+                const all = [...pts, ...tail];
+                base = `M ${all[0].x},${all[0].y}`;
+                for (let i = 1; i < all.length; i++) {
+                  base += ` L ${all[i].x},${all[i].y}`;
+                }
+              } else {
+                try {
+                  // Default auto-router for legacy/no-control wires
+                  // Rebuild a strict path every render so if parts moved, we stay 0/45/90
+                  // Build HV segments from other wires to discourage riding along them (orthogonal crossing allowed)
+                  const hvSegments = wires
+                    .filter(v => v.id !== w.id)
+                    .flatMap(v => {
+                      const vaComp = components.find((c) => c.id === v.from.componentId);
+                      const vbComp = components.find((c) => c.id === v.to.componentId);
+                      if (!vaComp || !vbComp) return [] as {x1:number;y1:number;x2:number;y2:number}[];
+                      const vaTerm = (partsLibrary[vaComp.partKey]?.terminals || []).find((t) => t.id === v.from.terminalId);
+                      const vbTerm = (partsLibrary[vbComp.partKey]?.terminals || []).find((t) => t.id === v.to.terminalId);
+                      if (!vaTerm || !vbTerm) return [] as {x1:number;y1:number;x2:number;y2:number}[];
+                      const pa = { x: vaComp.x + vaTerm.x, y: vaComp.y + vaTerm.y };
+                      const pb = { x: vbComp.x + vbTerm.x, y: vbComp.y + vbTerm.y };
+                      const pts = [pa, ...(v.controlPoints ?? []), pb];
+                      const segs: {x1:number;y1:number;x2:number;y2:number}[] = [];
+                      for (let i=1;i<pts.length;i++) {
+                        const p = pts[i-1], q = pts[i];
+                        if (p.x === q.x || p.y === q.y) segs.push({ x1: p.x, y1: p.y, x2: q.x, y2: q.y });
+                      }
+                      return segs;
+                    });
+                  const d = kiCadRoute(a, b, obstacles, { gridSize: GRID, clearance: GRID, escape: GRID * 2, existingSegments: hvSegments });
+                  // Convert this runtime path into control points for consistent offsetting and strictness
+                  const pts = Array.from(d.matchAll(/([ML])\s*(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g)).map(m => ({ x: snap(parseFloat(m[2])), y: snap(parseFloat(m[3])) }));
+                  if (pts.length >= 2) {
+                    const cps = pts.slice(1, pts.length - 1);
+                    // store once so future renders use control points
+                    setWireControlPoints(w.id, () => cps);
+                  }
+                  base = d;
+                } catch (e) {
+                  console.error("Routing error, falling back to straight line:", e);
+                  base = `M ${a.x},${a.y} L ${b.x},${b.y}`;
+                }
               }
 
               // Snap all path vertices to the grid to avoid micro off-grid artifacts
@@ -518,27 +463,27 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
                 return d;
               }
               base = snapPathToGrid(base);
-
-              // Consistent, grid-aligned offset for pairs
+              
               const width = strokeWidthForGauge(w.gauge);
               const isSingleStrand = w.type === 'ethernet' || w.type === 'usb';
               const rawPairOffset = isSingleStrand ? 0 : offsetForPair(w.type);
-              // Always use a multiple of GRID for offset
-              const pairOffset = Math.max(GRID, isSingleStrand ? 0 : width * 0.7 + 2);
+              const pairOffset = Math.max(rawPairOffset, isSingleStrand ? 0 : width * 0.7 + 2);
 
               function offsetPath(path: string, offset: number): string {
                 const pts = Array.from(path.matchAll(/([ML])\s*(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g)).map(m => ({ x: parseFloat(m[2]), y: parseFloat(m[3]) }));
                 if (pts.length < 2) return path;
                 const out: {x:number;y:number}[] = [];
+                const unitLeft = (a: any, b: any) => {
+                  const dx = b.x - a.x, dy = b.y - a.y;
+                  const len = Math.hypot(dx, dy) || 1;
+                  return { x: -dy / len, y: dx / len };
+                };
                 for (let i = 1; i < pts.length; i++) {
                   const a = pts[i - 1];
                   const b = pts[i];
-                  // Only cardinal segments, so offset is always up/down or left/right
-                  let n = { x: 0, y: 0 };
-                  if (a.x === b.x) n = { x: offset, y: 0 }; // vertical segment, offset horizontally
-                  else if (a.y === b.y) n = { x: 0, y: offset }; // horizontal segment, offset vertically
-                  const start = { x: a.x + n.x, y: a.y + n.y };
-                  const end = { x: b.x + n.x, y: b.y + n.y };
+                  const n = unitLeft(a, b);
+                  const start = { x: a.x + n.x * offset, y: a.y + n.y * offset };
+                  const end = { x: b.x + n.x * offset, y: b.y + n.y * offset };
                   if (i === 1) out.push(start);
                   const prev = out[out.length - 1];
                   if (!prev || prev.x !== end.x || prev.y !== end.y) out.push(end);
@@ -568,30 +513,40 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
                 return { baseColor: terminalColors[w.type], offsetColor: terminalColors[w.type] };
               })();
 
+              const isPairedType = (t: Terminal["type"]) => (
+                t === "power+" || t === "power-" || t === "signal+" || t === "signal-" || t === "canH" || t === "canL"
+              );
 
+              // Composite/partner flags computed one time here
+              const compT = complementType(w.type);
+              const hasPartner = !!compT && wires.some(v => v.type === compT && (
+                ((v.from.componentId === w.from.componentId && v.to.componentId === w.to.componentId) ||
+                 (v.from.componentId === w.to.componentId && v.to.componentId === w.from.componentId))
+              ) && v.netId === w.netId);
+              const canonical = isCanonicalType(w.type);
+              const compositeRequested = settings?.pair?.alwaysComposite ?? true;
+              const renderPairedComposite = !isSingleStrand && isPairedType(w.type) && canonical && (compositeRequested || hasPartner);
 
-              // If this is a non-canonical paired wire and its partner exists, skip visible draw to avoid double-render/overlap
-              if (!isSingleStrand && hasPartner && !canonical && isPairedType(w.type)) {
+              // If a partner exists, skip non-canonical to avoid duplicate visual
+              if (!isSingleStrand && isPairedType(w.type) && hasPartner && !canonical) {
                 return null;
               }
-
-              // Composite rendering for paired wires: draw two symmetric offsets around the centerline
-              const renderPairedComposite = !isSingleStrand && hasPartner && canonical && isPairedType(w.type);
 
               return (
                 <g key={w.id} onClick={() => select({ type: "wire", id: w.id })}>
                   {renderPairedComposite ? (
                     <>
                       {(() => {
-                        const half = Math.max(pairOffset / 2, width * 0.6 + 1);
+                        const spacing = (settings?.pair?.stripeSpacing ?? pairOffset);
+                        const half = Math.max(spacing / 2, width * 0.6 + 1);
                         const left = offsetPath(base, -half);
                         const right = offsetPath(base, +half);
-                        const sw = Math.max(1.5, width - 0.2);
+                        const thicknessScale = settings?.pair?.stripeThicknessScale ?? 1.0;
+                        const sw = Math.max(1.5, width * thicknessScale);
                         return (
                           <>
                             <path d={left} fill="none" stroke={colors.baseColor} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
                             <path d={right} fill="none" stroke={colors.offsetColor} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
-                            {/* Wide transparent hit area for selection */}
                             <path d={base} fill="none" stroke="transparent" strokeWidth={sw + 12} pointerEvents="stroke" style={{ cursor: "pointer" }} />
                           </>
                         );
@@ -601,10 +556,6 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
                     <>
                       <path d={base} fill="none" stroke={colors.baseColor} strokeWidth={isSingleStrand ? Math.max(3, width + 2) : width} strokeLinecap="round" strokeLinejoin="round" style={{ cursor: "pointer" }} />
                       <path d={base} fill="none" stroke="transparent" strokeWidth={(isSingleStrand ? Math.max(3, width + 2) : width) + 10} pointerEvents="stroke" style={{ cursor: "pointer" }} />
-                      {/* legacy offset draw when no partner present but type is paired (keep visual hint if needed) */}
-                      {!isSingleStrand && isPairedType(w.type) && hasPartner && canonical && (
-                        <></>
-                      )}
                     </>
                   )}
                 </g>
@@ -663,7 +614,7 @@ export const DiagramCanvas = ({ paletteVisible = true }: { paletteVisible?: bool
           >
             ⟲ Undo point
           </button>
-        </div>
+        </div> //apple -AA ron (asher didnt see this)n
       )}
     </div>
   );
@@ -683,6 +634,7 @@ const ComponentDraggable = ({ component, definition, onMouseDown, onTerminalClic
       isDragging: monitor.isDragging(),
     }),
   }));
+  const settings = useDiagramStore((s) => (s as any).settings);
 
   return (
     <g 
@@ -710,7 +662,7 @@ const ComponentDraggable = ({ component, definition, onMouseDown, onTerminalClic
           key={t.id}
           cx={t.x}
           cy={t.y}
-          r={7.5}
+          r={settings?.visuals?.terminalRadius ?? 7.5}
           fill={terminalColor(t.type)}
           stroke="hsl(var(--foreground)/0.4)"
           strokeWidth={1}

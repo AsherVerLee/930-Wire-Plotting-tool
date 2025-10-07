@@ -1,0 +1,62 @@
+const { FusesPlugin } = require('@electron-forge/plugin-fuses');
+const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+
+module.exports = {
+  packagerConfig: {
+    asar: true,
+    name: '930 CircuitPilot',
+    executableName: '930-circuitpilot',
+    appBundleId: 'com.930circuitpilot.app',
+    icon: './public/favicon.ico', // Use favicon.ico for macOS icon
+    extraResource: [
+      './dist'
+    ],
+    files: [
+      '**/*',
+      '!src/**/*',
+      '!electron/**/*.ts',
+      'dist/**/*'
+    ]
+  },
+  rebuildConfig: {},
+  makers: [
+    {
+      name: '@electron-forge/maker-squirrel',
+      config: {},
+      platforms: ['win32'],
+    },
+    {
+      name: '@electron-forge/maker-zip',
+      platforms: ['darwin'],
+    },
+    {
+      name: '@electron-forge/maker-deb',
+      config: {},
+      platforms: ['linux'],
+    },
+    {
+      name: '@electron-forge/maker-rpm',
+      config: {},
+      platforms: ['linux'],
+    },
+  ],
+  plugins: [
+    {
+      name: '@electron-forge/plugin-auto-unpack-natives',
+      config: {},
+    },
+    // Fuses are used to enable/disable various Electron functionality
+    // unimplimented in the default build. This is done to reduce the
+    // attack surface of the application.
+    // at package time, before code signing the application
+    new FusesPlugin({
+      version: FuseVersion.V1,
+      [FuseV1Options.RunAsNode]: false,
+      [FuseV1Options.EnableCookieEncryption]: true,
+      [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
+      [FuseV1Options.EnableNodeCliInspectArguments]: false,
+      [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
+      [FuseV1Options.OnlyLoadAppFromAsar]: true,
+    }),
+  ],
+};

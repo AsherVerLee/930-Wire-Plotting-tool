@@ -40,3 +40,86 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Fancy action button (scoped) */
+.fancy-btn {
+  --color: #2563eb; /* default */
+  font-family: inherit;
+  display: inline-block;
+  width: 6em;
+  height: 2.6em;
+  line-height: 2.5em;
+  overflow: hidden;
+  cursor: pointer;
+  margin: 0.25rem 0.5rem;
+  font-size: 15px;
+  z-index: 1;
+  color: var(--color);
+  border: 2px solid var(--color);
+  border-radius: 8px;
+  position: relative;
+  background: transparent;
+}
+.fancy-btn::before {
+  position: absolute;
+  content: "";
+  background: var(--color);
+  width: 150px;
+  height: 200px;
+  z-index: -1;
+  border-radius: 50%;
+  top: 100%;
+  left: 100%;
+  transition: 0.3s all;
+}
+.fancy-btn:hover { color: #fff; }
+.fancy-btn:hover::before { top: -30px; left: -30px; }
+
+/* Fancy toggle button with knob */
+.fancy-toggle {
+  --color: #22c55e; /* default on color */
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  height: 2.2em;
+  padding: 0 1rem;
+  border-radius: 9999px;
+  border: 2px solid var(--color);
+  color: var(--color);
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 1;
+}
+.fancy-toggle::before {
+  content: "";
+  position: absolute;
+  background: var(--color);
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  top: 100%; left: 100%;
+  z-index: -1;
+  transition: 0.3s all;
+}
+.fancy-toggle::after {
+  content: "";
+  position: absolute;
+  width: 18px; height: 18px;
+  border-radius: 9999px;
+  background: #fff;
+  top: 50%; transform: translateY(-50%);
+  left: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: left 0.25s ease;
+}
+.fancy-toggle:hover::before { top: -20px; left: -20px; }
+.fancy-toggle:hover { color: #fff; }
+.fancy-toggle.is-on { color: #fff; }
+.fancy-toggle.is-on::before { top: -20px; left: -20px; }
+.fancy-toggle.is-on::after { left: calc(100% - 26px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fancy-btn::before, .fancy-toggle::before, .fancy-toggle::after { transition: none; }
+}

@@ -1,0 +1,173 @@
+[
+  {
+    "key": "kraken-x60",
+    "name": "Kraken X60",
+    "width": 140,
+    "height": 72,
+    "terminals": [
+      { "id": "p+", "label": "+", "type": "power+", "x": 10, "y": 60 },
+      { "id": "p-", "label": "-", "type": "power-", "x": 30, "y": 60 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 100, "y": 60 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 120, "y": 60 }
+    ]
+  },
+  {
+    "key": "kraken-x44",
+    "name": "Kraken X44",
+    "width": 140,
+    "height": 72,
+    "terminals": [
+      { "id": "p+", "label": "+", "type": "power+", "x": 10, "y": 60 },
+      { "id": "p-", "label": "-", "type": "power-", "x": 30, "y": 60 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 100, "y": 60 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 120, "y": 60 }
+    ]
+  },
+  {
+    "key": "roborio",
+    "name": "RoboRIO",
+    "width": 180,
+    "height": 110,
+    "terminals": [
+      { "id": "ethernet", "label": "ETH", "type": "ethernet", "x": 20, "y": 20 },
+      { "id": "usb", "label": "USB", "type": "usb", "x": 50, "y": 20 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 120, "y": 90 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 150, "y": 90 }
+    ]
+  },
+  {
+    "key": "pdp-ctre-1-0",
+    "name": "CTRE PDP 1.0",
+    "width": 304,
+    "height": 192,
+    "anchors": true,
+    "terminals": [
+      { "id": "CH_L_0", "label": "CH12 (40A)", "type": "power+", "x": 12, "y": 17 },
+      { "id": "CH_L_1", "label": "CH13 (40A)", "type": "power+", "x": 12, "y": 35 },
+      { "id": "CH_L_2", "label": "CH14 (40A)", "type": "power+", "x": 12, "y": 52 },
+      { "id": "CH_L_3", "label": "CH15 (40A)", "type": "power+", "x": 12, "y": 69 },
+      { "id": "CH_L_4", "label": "CH4 (30A)", "type": "power+", "x": 12, "y": 104 },
+      { "id": "CH_L_5", "label": "CH5 (30A)", "type": "power+", "x": 12, "y": 121 },
+      { "id": "CH_L_6", "label": "CH6 (30A)", "type": "power+", "x": 12, "y": 138 },
+      { "id": "CH_L_7", "label": "CH7 (30A)", "type": "power+", "x": 12, "y": 155 },
+      { "id": "CH_R_0", "label": "CH0 (40A)", "type": "power+", "x": 292, "y": 17 },
+      { "id": "CH_R_1", "label": "CH1 (40A)", "type": "power+", "x": 292, "y": 35 },
+      { "id": "CH_R_2", "label": "CH2 (40A)", "type": "power+", "x": 292, "y": 52 },
+      { "id": "CH_R_3", "label": "CH3 (40A)", "type": "power+", "x": 292, "y": 69 },
+      { "id": "CH_R_4", "label": "CH8 (20A)", "type": "power+", "x": 292, "y": 104 },
+      { "id": "CH_R_5", "label": "CH9 (20A)", "type": "power+", "x": 292, "y": 121 },
+      { "id": "CH_R_6", "label": "CH10 (20A)", "type": "power+", "x": 292, "y": 138 },
+      { "id": "CH_R_7", "label": "CH11 (20A)", "type": "power+", "x": 292, "y": 155 },
+      { "id": "VRM+", "label": "VRM (20A)", "type": "power+", "x": 182, "y": 6 },
+      { "id": "PCM+", "label": "PCM (20A)", "type": "power+", "x": 213, "y": 6 },
+      { "id": "ROBORIO+", "label": "roboRIO (10A)", "type": "power+", "x": 243, "y": 6 },
+      { "id": "BAT+", "label": "BAT+", "type": "power+", "x": 46, "y": 186 },
+      { "id": "BAT-", "label": "BAT-", "type": "power-", "x": 76, "y": 186 },
+      { "id": "CAN_H", "label": "CAN H", "type": "canH", "x": 228, "y": 186 },
+      { "id": "CAN_L", "label": "CAN L", "type": "canL", "x": 258, "y": 186 }
+    ]
+  },
+  {
+    "key": "pdp-ctre-2-0",
+    "name": "CTRE PDP 2.0",
+    "width": 368,
+    "height": 163,
+    "anchors": true,
+    "terminals": [
+      { "id": "CH_T_0", "label": "CH0", "type": "power+", "x": 22, "y": 10 },
+      { "id": "CH_T_1", "label": "CH1", "type": "power+", "x": 51, "y": 10 },
+      { "id": "CH_T_2", "label": "CH2", "type": "power+", "x": 80, "y": 10 },
+      { "id": "CH_T_3", "label": "CH3", "type": "power+", "x": 109, "y": 10 },
+      { "id": "CH_T_4", "label": "CH4", "type": "power+", "x": 138, "y": 10 },
+      { "id": "CH_T_5", "label": "CH5", "type": "power+", "x": 167, "y": 10 },
+      { "id": "CH_T_6", "label": "CH6", "type": "power+", "x": 196, "y": 10 },
+      { "id": "CH_T_7", "label": "CH7", "type": "power+", "x": 225, "y": 10 },
+      { "id": "CH_T_8", "label": "CH8", "type": "power+", "x": 254, "y": 10 },
+      { "id": "CH_T_9", "label": "CH9", "type": "power+", "x": 283, "y": 10 },
+      { "id": "CH_T_10", "label": "CH10", "type": "power+", "x": 312, "y": 10 },
+      { "id": "CH_T_11", "label": "CH11", "type": "power+", "x": 341, "y": 10 },
+      { "id": "CH_B_0", "label": "CH12", "type": "power+", "x": 22, "y": 153 },
+      { "id": "CH_B_1", "label": "CH13", "type": "power+", "x": 51, "y": 153 },
+      { "id": "CH_B_2", "label": "CH14", "type": "power+", "x": 80, "y": 153 },
+      { "id": "CH_B_3", "label": "CH15", "type": "power+", "x": 109, "y": 153 },
+      { "id": "CH_B_4", "label": "CH16", "type": "power+", "x": 138, "y": 153 },
+      { "id": "CH_B_5", "label": "CH17", "type": "power+", "x": 167, "y": 153 },
+      { "id": "CH_B_6", "label": "CH18", "type": "power+", "x": 196, "y": 153 },
+      { "id": "CH_B_7", "label": "CH19", "type": "power+", "x": 225, "y": 153 },
+      { "id": "CH_B_8", "label": "CH20", "type": "power+", "x": 254, "y": 153 },
+      { "id": "CH_B_9", "label": "CH21", "type": "power+", "x": 283, "y": 153 },
+      { "id": "CH_B_10", "label": "CH22", "type": "power+", "x": 312, "y": 153 },
+      { "id": "CH_B_11", "label": "CH23", "type": "power+", "x": 341, "y": 153 },
+      { "id": "BAT+", "label": "BAT+", "type": "power+", "x": 353, "y": 49 },
+      { "id": "BAT-", "label": "BAT-", "type": "power-", "x": 353, "y": 114 },
+      { "id": "CAN_H", "label": "CAN H", "type": "canH", "x": 353, "y": 73 },
+      { "id": "CAN_L", "label": "CAN L", "type": "canL", "x": 353, "y": 90 }
+    ]
+  },
+  {
+    "key": "cancoder",
+    "name": "CTRE CANcoder",
+    "width": 120,
+    "height": 64,
+    "terminals": [
+      { "id": "p+", "label": "+", "type": "power+", "x": 10, "y": 48 },
+      { "id": "p-", "label": "-", "type": "power-", "x": 28, "y": 48 },
+      { "id": "canH", "label": "H", "type": "canH", "x": 80, "y": 48 },
+      { "id": "canL", "label": "L", "type": "canL", "x": 98, "y": 48 }
+    ]
+  },
+  {
+    "key": "canivore",
+    "name": "CTRE CANivore",
+    "width": 150,
+    "height": 70,
+    "terminals": [
+      { "id": "eth", "label": "ETH", "type": "ethernet", "x": 20, "y": 20 },
+      { "id": "canH", "label": "CAN H", "type": "canH", "x": 100, "y": 50 },
+      { "id": "canL", "label": "CAN L", "type": "canL", "x": 120, "y": 50 }
+    ]
+  },
+  {
+    "key": "mitocandria",
+    "name": "mitoCANdria",
+    "width": 150,
+    "height": 70,
+    "terminals": [
+      { "id": "canH", "label": "H", "type": "canH", "x": 30, "y": 50 },
+      { "id": "canL", "label": "L", "type": "canL", "x": 50, "y": 50 }
+    ]
+  },
+  {
+    "key": "switch",
+    "name": "Ethernet Switch (5-port)",
+    "width": 180,
+    "height": 60,
+    "terminals": [
+      { "id": "p1", "label": "1", "type": "ethernet", "x": 20, "y": 40 },
+      { "id": "p2", "label": "2", "type": "ethernet", "x": 50, "y": 40 },
+      { "id": "p3", "label": "3", "type": "ethernet", "x": 80, "y": 40 },
+      { "id": "p4", "label": "4", "type": "ethernet", "x": 110, "y": 40 },
+      { "id": "p5", "label": "5", "type": "ethernet", "x": 140, "y": 40 }
+    ]
+  },
+  {
+    "key": "radio",
+    "name": "Radio",
+    "width": 160,
+    "height": 70,
+    "terminals": [
+      { "id": "eth1", "label": "ETH1", "type": "ethernet", "x": 30, "y": 50 },
+      { "id": "eth2", "label": "ETH2", "type": "ethernet", "x": 60, "y": 50 }
+    ]
+  },
+  {
+    "key": "pigeon",
+    "name": "Pigeon Gyro",
+    "width": 130,
+    "height": 60,
+    "terminals": [
+      { "id": "canH", "label": "H", "type": "canH", "x": 20, "y": 40 },
+      { "id": "canL", "label": "L", "type": "canL", "x": 38, "y": 40 }
+    ]
+  }
+]

@@ -8,53 +8,18 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
-    minWidth: 1000,
-    minHeight: 700,
     webPreferences: {
-      preload: path.join(__dirname, "preload.cjs"),
+      preload: path.join(__dirname, "../dist/electron/preload.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
     },
-    show: false, // This paises the window until ready-to-show event
-    icon: path.join(__dirname, "../assets/icon.png"), // Add app icon
-    titleBarStyle: 'default',
-    title: '930 CircuitPilot',
-  });
-
-  // Show window when ready to prevent the white transiotion blo
-  mainWindow.once('ready-to-show', () => {
-    mainWindow?.show();
-    mainWindow?.focus();
   });
 
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
-    // Open dev tools in development
-    mainWindow.webContents.openDevTools();
   } else {
-    // In production, load the built React app
-    // main.cjs lives in dist/electron at runtime, index.html is at dist/index.html
-    const indexPath = path.join(__dirname, "../index.html");
-    console.log('Loading from:', indexPath);
-    console.log('File exists:', fs.existsSync(indexPath));
-    console.log('Current directory:', __dirname);
-    
-    // Always open dev tools to debug the issue
-    mainWindow.webContents.openDevTools();
-    
-    mainWindow.loadFile(indexPath).catch((error) => {
-      console.error('Failed to load file:', error);
-      // Fallback: try to load a simple HTML page
-      mainWindow?.loadURL('data:text/html,<h1>Error loading app</h1><p>Path: ' + indexPath + '</p>');
-    });
+    mainWindow.loadFile(path.join(__dirname, "../index.html"));
   }
-
-  // Add error handling
-  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
-    console.error('Failed to load:', errorCode, errorDescription);
-    // Try to show helpful error
-    mainWindow?.loadURL('data:text/html,<h1>Load Error</h1><p>Error: ' + errorDescription + '</p><p>Code: ' + errorCode + '</p>');
-  });
 }
 
 app.whenReady().then(() => {

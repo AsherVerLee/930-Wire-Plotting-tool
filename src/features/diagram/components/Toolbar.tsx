@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { useDiagramStore } from "@/state/diagramStore";
 import { exportPNG, exportPDF, saveProject, loadProject } from "@/utils/exporters";
 import { Save, FolderOpen, Undo2, Redo2, ZoomIn, ZoomOut, Download, Trash2, PanelLeftClose, PanelLeftOpen, Sparkles } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 interface ToolbarProps {
   onTogglePalette: () => void;
@@ -26,6 +27,8 @@ export const Toolbar = ({ onTogglePalette, paletteVisible }: ToolbarProps) => {
     await exportPDF(el, settings.export.dpi);
   };
 
+  const cleanerOn = settings.validator.autoCleanEnabled;
+
   return (
     <header className="h-16 flex items-center justify-between px-4 border-b border-border bg-gradient-to-r from-background to-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/40">
       <div className="flex items-center gap-2">
@@ -38,15 +41,25 @@ export const Toolbar = ({ onTogglePalette, paletteVisible }: ToolbarProps) => {
           </button>
         </div>
         <Separator orientation="vertical" className="mx-2 h-6" />
-        <Button variant="secondary" size="sm" onClick={async () => saveProject(saveDto())}><Save className="h-4 w-4 mr-2" />Save</Button>
-        <Button variant="secondary" size="sm" onClick={async () => { const dto = await loadProject(); if (dto) loadDto(dto); }}><FolderOpen className="h-4 w-4 mr-2" />Load</Button>
+        <Button variant="default" size="sm" onClick={async () => saveProject(saveDto())}>
+          <Save className="h-4 w-4 mr-2" />
+          Save
+        </Button>
+        <Button variant="default" size="sm" onClick={async () => { const dto = await loadProject(); if (dto) loadDto(dto); }}>
+          <FolderOpen className="h-4 w-4 mr-2" />
+          Load
+        </Button>
         <Button variant="secondary" size="sm" onClick={undo}><Undo2 className="h-4 w-4 mr-2" />Undo</Button>
         <Button variant="secondary" size="sm" onClick={redo}><Redo2 className="h-4 w-4 mr-2" />Redo</Button>
         <Button variant="secondary" size="sm" onClick={removeSelected}><Trash2 className="h-4 w-4 mr-2" />Delete</Button>
         <Separator orientation="vertical" className="mx-2 h-6" />
-        <Button variant={settings.validator.autoCleanEnabled ? "default" : "secondary"} size="sm" onClick={() => setAutoCleanEnabled(!settings.validator.autoCleanEnabled)} title="Toggle auto wire cleaner">
-          <Sparkles className="h-4 w-4 mr-2" /> {settings.validator.autoCleanEnabled ? "Cleaner: On" : "Cleaner: Off"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Switch id="auto-clean-switch" checked={cleanerOn} onCheckedChange={(v: boolean) => setAutoCleanEnabled(!!v)} />
+          <label htmlFor="auto-clean-switch" className="text-sm select-none cursor-pointer flex items-center gap-1">
+            <Sparkles className="h-4 w-4 opacity-70" />
+            Auto Clean
+          </label>
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
